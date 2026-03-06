@@ -1,4 +1,4 @@
-from mazegen.algorithms.base import Algorithm
+from mazegen.algorithms import Algorithm, DFS
 from mazegen.utils import grid, point
 
 
@@ -50,11 +50,11 @@ class MazeGenerator():
             for _ in range(width):
                 self.__grid[i].append(0)
 
-    def generate(self, algorithm: Algorithm) -> None:
+    def generate(self, algorithm: Algorithm) -> grid:
         match algorithm:
             case Algorithm.DFS:
-                print("DFS")
+                return DFS(self.__grid).generate()
             case Algorithm.HAK:
-                print("HAK")
+                return []
             case _:
                 raise ValueError("Algorithm is not supported")
