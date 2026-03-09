@@ -22,7 +22,8 @@ def main() -> None:
         exit: tuple[int, int] = (first_exit, second_exit)
     maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
     sys.setrecursionlimit(1000000)
-    print(maze.generate(Algorithm.HAK))
+    maze.draw_42()
+    print(maze.generate(Algorithm.DFS))
     print(maze.visualize())
 
 
