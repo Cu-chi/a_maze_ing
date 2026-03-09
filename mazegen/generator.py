@@ -50,46 +50,79 @@ class MazeGenerator():
             for _ in range(width):
                 self.__grid[i].append(0)
 
+    def draw_line(self, x: int, y: int, x2: int, y2: int) -> tuple[int, int]:
+        for ny in range(y2 - y + 1):
+            for nx in range(x2 - x + 1):
+                self.__grid[y + ny][x + nx] = -1
+        return x2, y2
+
+    def debug(self) -> None:
+        for y in range(self.__height):
+            for x in range(self.__width):
+                self.__grid[y][x] = 15
+
+    def draw_42(self) -> None:
+        x_placement: int = int(self.__width / 2) - \
+            (3 if self.__width % 2 else 4)
+        y_placement: int = int(self.__height / 2) - \
+            (2 if self.__height % 2 else 3)
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement, y_placement + 2)
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement + 2, y_placement)
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement, y_placement + 2)
+        y_placement -= 4
+        x_placement += 2
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement + 2, y_placement)
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement, y_placement + 2)
+        x_placement -= 2
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement, y_placement + 2)
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement + 2, y_placement)
+        x_placement -= 2
+        y_placement -= 2
+        x_placement, y_placement = self.draw_line(x_placement, y_placement,
+                                                  x_placement + 2, y_placement)
+
     def generate(self, algorithm: Algorithm) -> grid:
         match algorithm:
             case Algorithm.DFS:
-
-
                 self.__grid = DFS(self.__grid).generate()
             case Algorithm.HAK:
                 return []
             case _:
                 raise ValueError("Algorithm is not supported")
-
-
         return self.__grid
+
+    def is_closed(self, x: int, y: int) -> tuple[bool, bool, bool]:
+        E, S = 2, 4
+        is_south_closed: bool = self.__grid[y][x] & S == 0
+        is_east_closed: bool = self.__grid[y][x] & E == 0
+        if self.__grid[y][x] == -1:
+            is_south_closed = True
+            is_east_closed = True
+        return is_south_closed, is_east_closed, self.__grid[y][x] == -1
 
     def visualize(self) -> str:
         visualization: str = ""
         visualization += "▄▄▄▄" * (self.__width) + "▄"
-        E, S = 2, 4
         for y in range(self.__height):
             visualization += "\n█"
+            is_south_closed: bool
+            is_east_closed: bool
+            is_42: bool
             for x in range(self.__width):
-                is_south_closed: bool = self.__grid[y][x] & S == 0
-                is_east_closed: bool = self.__grid[y][x] & E == 0
-                visualization += "   "
-                if is_east_closed:
-                    visualization += "█"
-                else:
-                    visualization += " "
+                is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
+                visualization += "   " if not is_42 else "███"
+                visualization += "█" if is_east_closed else " "
             visualization += "\n█"
             for x in range(self.__width):
-                is_south_closed = self.__grid[y][x] & S == 0
-                is_east_closed = self.__grid[y][x] & E == 0
-                if is_south_closed:
-                    visualization += "▄▄▄"
-                else:
-                    visualization += "   "
-                if is_east_closed:
-                    visualization += "█"
-                else:
-                    visualization += "▄"
-
+                is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
+                visualization += "▄▄▄" if is_south_closed and not is_42 else \
+                    ("   " if not is_42 else "███")
+                visualization += "█" if is_east_closed else "▄"
         return visualization
-
