@@ -23,6 +23,7 @@ lint:
 	$(PYTHON) -m mypy . $(MYPY_FLAGS)
 
 lint-strict:
+	$(PYTHON) -m flake8 .
 	$(PYTHON) -m mypy . $(MYPY_FLAGS) --strict
 
 .PHONY: install run debug clean lint lint-strict
