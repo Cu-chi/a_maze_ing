@@ -53,8 +53,38 @@ class MazeGenerator():
     def generate(self, algorithm: Algorithm) -> grid:
         match algorithm:
             case Algorithm.DFS:
-                return DFS(self.__grid).generate()
+                self.__grid = DFS(self.__grid).generate()
             case Algorithm.HAK:
                 return []
             case _:
                 raise ValueError("Algorithm is not supported")
+        return self.__grid
+
+    def visualize(self) -> str:
+        visualization: str = ""
+        visualization += "▄▄▄▄" * (self.__width) + "▄"
+        E, S = 2, 4
+        for y in range(self.__height):
+            visualization += "\n█"
+            for x in range(self.__width):
+                is_south_closed: bool = self.__grid[y][x] & S == 0
+                is_east_closed: bool = self.__grid[y][x] & E == 0
+                visualization += "   "
+                if is_east_closed:
+                    visualization += "█"
+                else:
+                    visualization += " "
+            visualization += "\n█"
+            for x in range(self.__width):
+                is_south_closed = self.__grid[y][x] & S == 0
+                is_east_closed = self.__grid[y][x] & E == 0
+                if is_south_closed:
+                    visualization += "▄▄▄"
+                else:
+                    visualization += "   "
+                if is_east_closed:
+                    visualization += "█"
+                else:
+                    visualization += "▄"
+
+        return visualization
