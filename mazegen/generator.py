@@ -53,11 +53,15 @@ class MazeGenerator():
     def generate(self, algorithm: Algorithm) -> grid:
         match algorithm:
             case Algorithm.DFS:
+
+
                 self.__grid = DFS(self.__grid).generate()
             case Algorithm.HAK:
                 return []
             case _:
                 raise ValueError("Algorithm is not supported")
+
+
         return self.__grid
 
     def visualize(self) -> str:
@@ -88,3 +92,4 @@ class MazeGenerator():
                     visualization += "▄"
 
         return visualization
+
