@@ -56,11 +56,6 @@ class MazeGenerator():
                 self.__grid[y + ny][x + nx] = -1
         return x2, y2
 
-    def debug(self) -> None:
-        for y in range(self.__height):
-            for x in range(self.__width):
-                self.__grid[y][x] = 15
-
     def draw_42(self) -> None:
         x_placement: int = int(self.__width / 2) - \
             (3 if self.__width % 2 else 4)
@@ -107,6 +102,13 @@ class MazeGenerator():
             is_east_closed = True
         return is_south_closed, is_east_closed, self.__grid[y][x] == -1
 
+    def draw_entry_exit(self, current_point: point) -> str:
+        if self.__entry == current_point:
+            return "\033[46m"
+        if self.__exit == current_point:
+            return "\033[103m"
+        return ""
+
     def visualize(self) -> str:
         visualization: str = ""
         visualization += "▄▄▄▄" * (self.__width) + "▄"
@@ -116,13 +118,15 @@ class MazeGenerator():
             is_east_closed: bool
             is_42: bool
             for x in range(self.__width):
+                visualization += self.draw_entry_exit((x, y))
                 is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
-                visualization += "   " if not is_42 else "███"
+                visualization += "   \033[0m" if not is_42 else "███"
                 visualization += "█" if is_east_closed else " "
             visualization += "\n█"
             for x in range(self.__width):
+                visualization += self.draw_entry_exit((x, y))
                 is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
-                visualization += "▄▄▄" if is_south_closed and not is_42 else \
-                    ("   " if not is_42 else "███")
+                visualization += "▄▄▄\033[0m" if is_south_closed \
+                    and not is_42 else ("   \033[0m" if not is_42 else "███")
                 visualization += "█" if is_east_closed else "▄"
         return visualization
