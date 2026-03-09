@@ -15,7 +15,8 @@ debug:
 	$(PYTHON) -m pdb $(MAIN) $(CONFIG)
 
 clean:
-	@rm -rf __pycache__ .mypy_cache maze.txt **/__pycache__ **/.mypy_cache
+	@rm -rf __pycache__ .mypy_cache maze.txt **/__pycache__ **/.mypy_cache \
+	**/**/__pycache__
 
 lint:
 	$(PYTHON) -m flake8 .
