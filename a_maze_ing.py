@@ -1,5 +1,7 @@
 from mazegen import MazeGenerator, Algorithm
+from menu import Menu
 from parser import parsed_info
+from typing import Callable
 from io import TextIOWrapper
 import sys
 
@@ -44,9 +46,33 @@ def main() -> None:
     maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
     sys.setrecursionlimit(1000000)
     maze.draw_42()
-    print(maze.generate(Algorithm.HAK))
-    maze.solve_bfs(entry, exit)
-    print(maze.visualize(True))
+    maze.generate(Algorithm.HAK)
+
+    def new_maze() -> None:
+        maze.create_grid()
+        maze.draw_42()
+        maze.generate(Algorithm.HAK)
+
+    menu_list: list[tuple[str, Callable[[], None]]] = [
+            ("Generate a new maze", new_maze),
+            ("Show/Hide shortest path from the entrance to the exit",
+             lambda: None),
+            ("Change maze wall colours", lambda: None),
+            ("Edit colours of the 42 pattern", lambda: None)
+        ]
+    menu: Menu = Menu(menu_list)
+
+    def handle_exit() -> None:
+        menu.exiting = True
+        print("Exiting...")
+        sys.stdout.write("\033[?25h")  # restore cursor visibility
+    menu.menu.append(("Exit", handle_exit))
+    try:
+        while not menu.exiting:
+            sys.stdout.write("\033c")
+            menu.show(menu.append_menu(maze.visualize()))
+    except KeyboardInterrupt:
+        handle_exit()
 
 
 if __name__ == "__main__":
