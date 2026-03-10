@@ -44,6 +44,11 @@ class MazeGenerator():
         self.__entry: point = entry
         self.__exit: point = exit
         self.__grid: grid = []
+        self.N, self.E, self.S, self.W = 1, 2, 4, 8
+        self.DX: dict[int, int] = {self.N: 0, self.S: 0,
+                                   self.E: 1, self.W: -1}
+        self.DY: dict[int, int] = {self.N: -1, self.S: 1,
+                                   self.E: 0, self.W: 0}
 
         for i in range(height):
             self.__grid.append([])
@@ -109,7 +114,7 @@ class MazeGenerator():
             return "\033[103m"
         return ""
 
-    def solve_bfs(self, entry: point, exit: point) -> list | list[point]:
+    def solve_bfs(self, entry: point, exit: point) -> list[point]:
         queue: list[point] = [entry]
         visited: set[point] = {entry}
         parents: dict[point, point | None] = {entry: None}
@@ -122,15 +127,16 @@ class MazeGenerator():
             current = queue.pop(0)
             if current == exit:
                 break
+            cx, cy = current
             for dx, dy, bit in moves:
-                cy, cx = current
-                ny, nx = cy + dy, cx + dx
-                if 0 <= nx < self.w and 0 <= ny < self.h:
-                    if not (self.grid[cy][cx] & bit):
-                        if (ny, nx) not in visited:
-                            visited.add((ny, nx))
-                            parents[(ny, nx)] = current
-                            queue.append((ny, nx))
+                nx, ny = cx + dx, cy + dy
+                if 0 <= nx < self.__width and 0 <= ny < self.__height:
+                    if self.__grid[cy][cx] != -1 and (self.__grid[cy][cx]
+                                                      & bit):
+                        if (nx, ny) not in visited:
+                            visited.add((nx, ny))
+                            parents[(nx, ny)] = current
+                            queue.append((nx, ny))
         path: list[point] = []
         if current != exit:
             return []
