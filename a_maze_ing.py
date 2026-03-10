@@ -45,6 +45,7 @@ def main() -> None:
         return
     maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
     sys.setrecursionlimit(1000000)
+    sys.stdout.write("\033[?25l")
 
     def new_maze() -> None:
         maze.create_grid()
@@ -75,8 +76,10 @@ def main() -> None:
     new_maze()
     try:
         while not menu.exiting:
-            sys.stdout.write("\033c")
-            menu.show(menu.append_menu(maze.visualize(path_state)))
+            if menu.need_refresh:
+                menu.need_refresh = False
+                sys.stdout.write("\033c")
+                menu.show(menu.append_menu(maze.visualize(path_state)))
     except KeyboardInterrupt:
         handle_exit()
 
