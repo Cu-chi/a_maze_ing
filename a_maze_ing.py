@@ -62,6 +62,7 @@ def main() -> None:
         maze.draw_42()
         maze.generate(Algorithm.HAK)
         maze.solve_bfs()
+        menu.need_refresh = True
 
     menu.menu_list = [
         ("Generate a new maze", new_maze),
