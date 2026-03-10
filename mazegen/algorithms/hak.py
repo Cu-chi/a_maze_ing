@@ -1,6 +1,6 @@
 from mazegen.algorithms.base import BaseAlgorithm
-from mazegen.utils import grid
-from typing import Optional
+from mazegen.utils import grid, point
+# from typing import Optional
 import random
 
 
@@ -9,10 +9,10 @@ class HAK(BaseAlgorithm):
         super().__init__(grid_)
         self.h: int = len(self.grid)
         self.w: int = len(self.grid[0])
-        self.visited: bool = [[False for _ in range(self.w)]
-                              for _ in range(self.h)]
+        self.visited: list[list[bool]] = [[False for _ in range(self.w)]
+                                          for _ in range(self.h)]
 
-    def walk(self, cy: int, cx: int) -> tuple[int, int] | None:
+    def walk(self, cy: int, cx: int) -> point | None:
         self.visited[cy][cx] = True
         directions: list[int] = [self.N, self.S, self.E, self.W]
         random.shuffle(directions)
@@ -26,7 +26,7 @@ class HAK(BaseAlgorithm):
                 return (ny, nx)
         return None
 
-    def hunt(self) -> Optional[tuple[int, int]]:
+    def hunt(self) -> point | None:
         for cy in range(self.h):
             for cx in range(self.w):
                 if not self.visited[cy][cx] and self.grid[cy][cx] != -1:
@@ -43,10 +43,11 @@ class HAK(BaseAlgorithm):
         return None
 
     def generate(self) -> grid:
-        current: tuple = (0, 0)
+        current: point | None = (0, 0)
+        next: point | None = None
         while current:
             while current:
-                next: grid[list[int]] | None = self.walk(*current)
+                next = self.walk(*current)
                 if not next:
                     break
                 current = next
