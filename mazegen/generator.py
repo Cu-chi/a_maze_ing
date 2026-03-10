@@ -116,18 +116,18 @@ class MazeGenerator():
             return "\033[103m"
         return ""
 
-    def solve_bfs(self, entry: point, exit: point) -> None:
-        queue: list[point] = [entry]
-        visited: set[point] = {entry}
-        parents: dict[point, point | None] = {entry: None}
+    def solve_bfs(self) -> None:
+        queue: list[point] = [self.__entry]
+        visited: set[point] = {self.__entry}
+        parents: dict[point, point | None] = {self.__entry: None}
         moves: list[tuple[int, int, int]] = [
             (0, -1, self.N), (1, 0, self.E),
             (0, 1, self.S), (-1, 0, self.W)
         ]
-        current: point = entry
+        current: point = self.__entry
         while queue:
             current = queue.pop(0)
-            if current == exit:
+            if current == self.__exit:
                 break
             cx, cy = current
             for dx, dy, bit in moves:
@@ -140,9 +140,9 @@ class MazeGenerator():
                             parents[(nx, ny)] = current
                             queue.append((nx, ny))
         path: list[point] = []
-        if current != exit:
+        if current != self.__exit:
             return
-        new_current: point | None = exit
+        new_current: point | None = self.__exit
         while new_current is not None:
             path.append(new_current)
             new_current = parents[new_current]
