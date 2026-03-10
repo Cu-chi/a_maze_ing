@@ -21,6 +21,7 @@ class MazeGenerator():
             ValueError: if height is lower than 2
             ValueError: if entry point is not in the maze
             ValueError: if exit point is not in the maze
+            ValueError: if entry and exit point are the same
         """
         if width < 10:
             raise ValueError("width attribute must be greater"
@@ -150,6 +151,11 @@ class MazeGenerator():
             new_current = parents[new_current]
         self.path = path[::-1]
 
+    def is_cell_path(self, p: point) -> bool:
+        return (p in self.path
+                and p != self.__entry
+                and p != self.__exit)
+
     def visualize(self, display_path: bool) -> str:
         visualization: str = ""
         visualization += "▄▄▄▄" * (self.__width) + "▄"
@@ -158,43 +164,26 @@ class MazeGenerator():
             is_south_closed: bool
             is_east_closed: bool
             is_42: bool
-            for x in range(self.__width):
-                visualization += self.draw_entry_exit((x, y))
-                is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
-                if display_path:
-                    if (x, y) in self.path and (x, y) is not self.__entry and\
-                            (x, y) is not self.__exit:
-                        visualization += "\033[47m   \033[0m" if not is_42 \
-                            else "███"
-                        visualization += "█" if is_east_closed \
-                            else "\033[47m \033[0m"
+            for is_top in [True, False]:
+                if not is_top:
+                    visualization += "\n█"
+                for x in range(self.__width):
+                    visualization += self.draw_entry_exit((x, y))
+                    is_south_closed, is_east_closed, is_42 = self.is_closed(x,
+                                                                            y)
+                    path: bool = self.is_cell_path((x, y)) and display_path
+                    if path:
+                        visualization += "\033[47m"
+                    if is_top:
+                        visualization += "███" if is_42 else "   "
                     else:
-                        visualization += "   \033[0m" if not is_42 else "███"
-                        visualization += "█" if is_east_closed else " "
-                else:
-                    visualization += "   \033[0m" if not is_42 else "███"
-                    visualization += "█" if is_east_closed else " "
-            visualization += "\n█"
-            for x in range(self.__width):
-                visualization += self.draw_entry_exit((x, y))
-                is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
-                if display_path:
-                    if (x, y) in self.path and (x, y) is not self.__entry and\
-                            (x, y) is not self.__exit:
-                        visualization += "\033[47m▄▄▄\033[0m" \
-                            if is_south_closed \
-                            and not is_42 else ("\033[47m   \033[0m"
-                                                if not is_42 else "███")
-                        visualization += "█" if is_east_closed \
-                            else "\033[47m▄\033[0m"
-                    else:
-                        visualization += "▄▄▄\033[0m" if is_south_closed \
-                            and not is_42 else ("   \033[0m" if not is_42
-                                                else "███")
-                        visualization += "█" if is_east_closed else "▄"
-                else:
-                    visualization += "▄▄▄\033[0m" if is_south_closed \
-                        and not is_42 else ("   \033[0m" if not is_42
-                                            else "███")
-                    visualization += "█" if is_east_closed else "▄"
+                        visualization += "▄▄▄" if is_south_closed \
+                            and not is_42 else ("███" if is_42
+                                                else "   ")
+                    visualization += "\033[0m"
+                    if path:
+                        visualization += "\033[47m"
+                    visualization += "█" if is_east_closed \
+                        else (" " if is_top else "▄")
+                    visualization += "\033[0m"
         return visualization
