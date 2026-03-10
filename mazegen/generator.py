@@ -39,6 +39,9 @@ class MazeGenerator():
             raise ValueError("exit coordinates are not valid. Must be between"
                              f" (0, 0)-({width-1}, {height-1}), is {exit}")
 
+        if entry == exit:
+            raise ValueError("entry and exit must be different.")
+
         self.__width: int = width
         self.__height: int = height
         self.__entry: point = entry
