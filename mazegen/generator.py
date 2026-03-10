@@ -43,12 +43,12 @@ class MazeGenerator():
         self.__height: int = height
         self.__entry: point = entry
         self.__exit: point = exit
-        self.__grid: grid = []
+        self.__grid: grid
+        self.create_grid()
 
-        for i in range(height):
-            self.__grid.append([])
-            for _ in range(width):
-                self.__grid[i].append(0)
+    def create_grid(self) -> None:
+        self.__grid = [[0 for _ in range(self.__width)]
+                       for _ in range(self.__height)]
 
     def draw_line(self, x: int, y: int, x2: int, y2: int) -> tuple[int, int]:
         for ny in range(y2 - y + 1):
