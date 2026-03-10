@@ -10,7 +10,8 @@ class Menu:
         self.exiting: bool = False
         self.menu: list[tuple[str, Callable[[], Any]]] = menu
         self.listener: keyboard.Listener = keyboard.Listener(
-            on_press=functools.partial(Menu.handle_keyboard_press, self)
+            on_press=functools.partial(Menu.handle_keyboard_press, self),
+            suppress=True
         )
         self.listener.start()
 
