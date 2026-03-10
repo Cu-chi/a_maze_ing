@@ -43,8 +43,13 @@ class MazeGenerator():
         self.__height: int = height
         self.__entry: point = entry
         self.__exit: point = exit
-        self.__grid: grid
-        self.create_grid()
+        self.__grid: grid = []
+        self.N, self.E, self.S, self.W = 1, 2, 4, 8
+        self.DX: dict[int, int] = {self.N: 0, self.S: 0,
+                                   self.E: 1, self.W: -1}
+        self.DY: dict[int, int] = {self.N: -1, self.S: 1,
+                                   self.E: 0, self.W: 0}
+        self.path: list[point] = []
 
     def create_grid(self) -> None:
         self.__grid = [[0 for _ in range(self.__width)]
@@ -109,7 +114,39 @@ class MazeGenerator():
             return "\033[103m"
         return ""
 
-    def visualize(self) -> str:
+    def solve_bfs(self, entry: point, exit: point) -> None:
+        queue: list[point] = [entry]
+        visited: set[point] = {entry}
+        parents: dict[point, point | None] = {entry: None}
+        moves: list[tuple[int, int, int]] = [
+            (0, -1, self.N), (1, 0, self.E),
+            (0, 1, self.S), (-1, 0, self.W)
+        ]
+        current: point = entry
+        while queue:
+            current = queue.pop(0)
+            if current == exit:
+                break
+            cx, cy = current
+            for dx, dy, bit in moves:
+                nx, ny = cx + dx, cy + dy
+                if 0 <= nx < self.__width and 0 <= ny < self.__height:
+                    if self.__grid[cy][cx] != -1 and (self.__grid[cy][cx]
+                                                      & bit):
+                        if (nx, ny) not in visited:
+                            visited.add((nx, ny))
+                            parents[(nx, ny)] = current
+                            queue.append((nx, ny))
+        path: list[point] = []
+        if current != exit:
+            return
+        new_current: point | None = exit
+        while new_current is not None:
+            path.append(new_current)
+            new_current = parents[new_current]
+        self.path = path[::-1]
+
+    def visualize(self, display_path: bool) -> str:
         visualization: str = ""
         visualization += "▄▄▄▄" * (self.__width) + "▄"
         for y in range(self.__height):
@@ -120,13 +157,40 @@ class MazeGenerator():
             for x in range(self.__width):
                 visualization += self.draw_entry_exit((x, y))
                 is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
-                visualization += "   \033[0m" if not is_42 else "███"
-                visualization += "█" if is_east_closed else " "
+                if display_path:
+                    if (x, y) in self.path and (x, y) is not self.__entry and\
+                            (x, y) is not self.__exit:
+                        visualization += "\033[47m   \033[0m" if not is_42 \
+                            else "███"
+                        visualization += "█" if is_east_closed \
+                            else "\033[47m \033[0m"
+                    else:
+                        visualization += "   \033[0m" if not is_42 else "███"
+                        visualization += "█" if is_east_closed else " "
+                else:
+                    visualization += "   \033[0m" if not is_42 else "███"
+                    visualization += "█" if is_east_closed else " "
             visualization += "\n█"
             for x in range(self.__width):
                 visualization += self.draw_entry_exit((x, y))
                 is_south_closed, is_east_closed, is_42 = self.is_closed(x, y)
-                visualization += "▄▄▄\033[0m" if is_south_closed \
-                    and not is_42 else ("   \033[0m" if not is_42 else "███")
-                visualization += "█" if is_east_closed else "▄"
+                if display_path:
+                    if (x, y) in self.path and (x, y) is not self.__entry and\
+                            (x, y) is not self.__exit:
+                        visualization += "\033[47m▄▄▄\033[0m" \
+                            if is_south_closed \
+                            and not is_42 else ("\033[47m   \033[0m"
+                                                if not is_42 else "███")
+                        visualization += "█" if is_east_closed \
+                            else "\033[47m▄\033[0m"
+                    else:
+                        visualization += "▄▄▄\033[0m" if is_south_closed \
+                            and not is_42 else ("   \033[0m" if not is_42
+                                                else "███")
+                        visualization += "█" if is_east_closed else "▄"
+                else:
+                    visualization += "▄▄▄\033[0m" if is_south_closed \
+                        and not is_42 else ("   \033[0m" if not is_42
+                                            else "███")
+                    visualization += "█" if is_east_closed else "▄"
         return visualization
