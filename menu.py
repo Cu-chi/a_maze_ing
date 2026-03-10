@@ -5,10 +5,10 @@ import sys
 
 
 class Menu:
-    def __init__(self, menu: list[tuple[str, Callable[[], Any]]]) -> None:
+    def __init__(self) -> None:
         self.current_indexed: int = 0
         self.exiting: bool = False
-        self.menu: list[tuple[str, Callable[[], Any]]] = menu
+        self.menu_list: list[tuple[str, Callable[[], Any]]] = []
         self.need_refresh: bool = True
         self.listener: keyboard.Listener = keyboard.Listener(
             on_press=functools.partial(Menu.handle_keyboard_press, self),
@@ -28,7 +28,7 @@ class Menu:
 
     def append_menu(self, output: str) -> str:
         output += "\n"
-        for i, menu_data in enumerate(self.menu):
+        for i, menu_data in enumerate(self.menu_list):
             if self.current_indexed == i:
                 output += "\033[47m\033[30m"
             output += f"{i}: " + menu_data[0] + "\033[0m\n"
@@ -44,9 +44,9 @@ class Menu:
                 if self.current_indexed > 0:
                     self.current_indexed -= 1
             if keyboard.Key.down == key:
-                if self.current_indexed < len(self.menu) - 1:
+                if self.current_indexed < len(self.menu_list) - 1:
                     self.current_indexed += 1
             if keyboard.Key.enter == key:
-                self.menu[self.current_indexed][1]()
+                self.menu_list[self.current_indexed][1]()
         except Exception:
             pass
