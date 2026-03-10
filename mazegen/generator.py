@@ -109,6 +109,37 @@ class MazeGenerator():
             return "\033[103m"
         return ""
 
+    def solve_bfs(self, entry: point, exit: point) -> list | list[point]:
+        queue: list[point] = [entry]
+        visited: set[point] = {entry}
+        parents: dict[point, point | None] = {entry: None}
+        moves: list[tuple[int, int, int]] = [
+            (0, -1, self.N), (1, 0, self.E),
+            (0, 1, self.S), (-1, 0, self.W)
+        ]
+        current: point = entry
+        while queue:
+            current = queue.pop(0)
+            if current == exit:
+                break
+            for dx, dy, bit in moves:
+                cy, cx = current
+                ny, nx = cy + dy, cx + dx
+                if 0 <= nx < self.w and 0 <= ny < self.h:
+                    if not (self.grid[cy][cx] & bit):
+                        if (ny, nx) not in visited:
+                            visited.add((ny, nx))
+                            parents[(ny, nx)] = current
+                            queue.append((ny, nx))
+        path: list[point] = []
+        if current != exit:
+            return []
+        new_current: point | None = exit
+        while new_current is not None:
+            path.append(new_current)
+            new_current = parents[new_current]
+        return path[::-1]
+
     def visualize(self) -> str:
         visualization: str = ""
         visualization += "▄▄▄▄" * (self.__width) + "▄"
