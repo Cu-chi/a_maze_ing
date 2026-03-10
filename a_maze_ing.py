@@ -70,7 +70,7 @@ def main() -> None:
     try:
         while not menu.exiting:
             sys.stdout.write("\033c")
-            menu.show(menu.append_menu(maze.visualize()))
+            menu.show(menu.append_menu(maze.visualize(True)))
     except KeyboardInterrupt:
         handle_exit()
 
