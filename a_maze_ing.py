@@ -1,7 +1,6 @@
 from mazegen import MazeGenerator, Algorithm
 from menu import Menu
 from parser import parsed_info
-from typing import Callable
 from io import TextIOWrapper
 import sys
 
@@ -43,9 +42,20 @@ def main() -> None:
     except ValueError:
         print("Error: exit has to be a tuple of integers.")
         return
-    maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
+
     sys.setrecursionlimit(1000000)
-    sys.stdout.write("\033[?25l")
+    maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
+    path_state: bool = False
+    menu: Menu = Menu()
+
+    def handle_exit() -> None:
+        menu.exiting = True
+        print("Exiting...")
+        sys.stdout.write("\033[?25h")  # show cursor
+
+    def path_display() -> None:
+        nonlocal path_state
+        path_state = not path_state
 
     def new_maze() -> None:
         maze.create_grid()
@@ -53,32 +63,20 @@ def main() -> None:
         maze.generate(Algorithm.HAK)
         maze.solve_bfs()
 
-    path_state: bool = False
-
-    def path_display() -> None:
-        nonlocal path_state
-        path_state = not path_state
-
-    menu_list: list[tuple[str, Callable[[], None]]] = [
-            ("Generate a new maze", new_maze),
-            ("Show/Hide shortest path from the entrance to the exit",
-             path_display),
-            ("Change maze wall colours", lambda: None),
-            ("Edit colours of the 42 pattern", lambda: None)
-        ]
-    menu: Menu = Menu(menu_list)
-
-    def handle_exit() -> None:
-        menu.exiting = True
-        print("Exiting...")
-        sys.stdout.write("\033[?25h")  # restore cursor visibility
-    menu.menu.append(("Exit", handle_exit))
+    menu.menu_list = [
+        ("Generate a new maze", new_maze),
+        ("Show/Hide shortest path from the entrance to the exit",
+            path_display),
+        ("Change maze wall colours", lambda: None),
+        ("Edit colours of the 42 pattern", lambda: None),
+        ("Exit", handle_exit)
+    ]
     new_maze()
     try:
         while not menu.exiting:
             if menu.need_refresh:
                 menu.need_refresh = False
-                sys.stdout.write("\033c")
+                sys.stdout.write("\033c\033[?25l")  # clear and hide cursor
                 menu.show(menu.append_menu(maze.visualize(path_state)))
     except KeyboardInterrupt:
         handle_exit()
