@@ -45,18 +45,23 @@ def main() -> None:
         return
     maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
     sys.setrecursionlimit(1000000)
-    maze.draw_42()
-    maze.generate(Algorithm.HAK)
 
     def new_maze() -> None:
         maze.create_grid()
         maze.draw_42()
         maze.generate(Algorithm.HAK)
+        maze.solve_bfs()
+
+    path_state: bool = False
+
+    def path_display() -> None:
+        nonlocal path_state
+        path_state = not path_state
 
     menu_list: list[tuple[str, Callable[[], None]]] = [
             ("Generate a new maze", new_maze),
             ("Show/Hide shortest path from the entrance to the exit",
-             lambda: None),
+             path_display),
             ("Change maze wall colours", lambda: None),
             ("Edit colours of the 42 pattern", lambda: None)
         ]
@@ -67,10 +72,11 @@ def main() -> None:
         print("Exiting...")
         sys.stdout.write("\033[?25h")  # restore cursor visibility
     menu.menu.append(("Exit", handle_exit))
+    new_maze()
     try:
         while not menu.exiting:
             sys.stdout.write("\033c")
-            menu.show(menu.append_menu(maze.visualize(True)))
+            menu.show(menu.append_menu(maze.visualize(path_state)))
     except KeyboardInterrupt:
         handle_exit()
 
