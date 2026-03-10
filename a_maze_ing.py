@@ -45,7 +45,8 @@ def main() -> None:
     sys.setrecursionlimit(1000000)
     maze.draw_42()
     print(maze.generate(Algorithm.HAK))
-    print(maze.visualize())
+    maze.solve_bfs(entry, exit)
+    print(maze.visualize(True))
 
 
 if __name__ == "__main__":
