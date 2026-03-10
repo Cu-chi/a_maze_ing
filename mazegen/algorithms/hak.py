@@ -20,7 +20,7 @@ class HAK(BaseAlgorithm):
             nx: int = cx + self.DX[dir]
             ny: int = cy + self.DY[dir]
             if (0 <= ny < len(self.grid)) and (0 <= nx < len(self.grid[ny])) \
-               and not self.visited[ny][nx]:
+               and not self.visited[ny][nx] and self.grid[ny][nx] != -1:
                 self.grid[cy][cx] |= dir
                 self.grid[ny][nx] |= self.OPPOSITE[dir]
                 return (ny, nx)
@@ -29,7 +29,7 @@ class HAK(BaseAlgorithm):
     def hunt(self) -> Optional[tuple[int, int]]:
         for cy in range(self.h):
             for cx in range(self.w):
-                if not self.visited[cy][cx]:
+                if not self.visited[cy][cx] and self.grid[cy][cx] != -1:
                     for direction in [self.N, self.S, self.E, self.W]:
                         nx: int = cx + self.DX[direction]
                         ny: int = cy + self.DY[direction]
