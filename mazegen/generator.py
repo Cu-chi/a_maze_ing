@@ -43,13 +43,14 @@ class MazeGenerator():
         self.__height: int = height
         self.__entry: point = entry
         self.__exit: point = exit
-        self.__grid: grid = []
+        self.__grid: grid
         self.N, self.E, self.S, self.W = 1, 2, 4, 8
         self.DX: dict[int, int] = {self.N: 0, self.S: 0,
                                    self.E: 1, self.W: -1}
         self.DY: dict[int, int] = {self.N: -1, self.S: 1,
                                    self.E: 0, self.W: 0}
         self.path: list[point] = []
+        self.create_grid()
 
     def create_grid(self) -> None:
         self.__grid = [[0 for _ in range(self.__width)]
@@ -66,6 +67,7 @@ class MazeGenerator():
             (3 if self.__width % 2 else 4)
         y_placement: int = int(self.__height / 2) - \
             (2 if self.__height % 2 else 3)
+        print(x_placement, y_placement, x_placement, y_placement + 2)
         x_placement, y_placement = self.draw_line(x_placement, y_placement,
                                                   x_placement, y_placement + 2)
         x_placement, y_placement = self.draw_line(x_placement, y_placement,
