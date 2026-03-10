@@ -67,7 +67,6 @@ class MazeGenerator():
             (3 if self.__width % 2 else 4)
         y_placement: int = int(self.__height / 2) - \
             (2 if self.__height % 2 else 3)
-        print(x_placement, y_placement, x_placement, y_placement + 2)
         x_placement, y_placement = self.draw_line(x_placement, y_placement,
                                                   x_placement, y_placement + 2)
         x_placement, y_placement = self.draw_line(x_placement, y_placement,
