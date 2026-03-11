@@ -11,8 +11,7 @@ class Menu:
         self.menu_list: list[tuple[str, Callable[[], Any]]] = []
         self.need_refresh: bool = True
         self.listener: keyboard.Listener = keyboard.Listener(
-            on_press=functools.partial(Menu.handle_keyboard_press, self),
-            suppress=True
+            on_press=functools.partial(Menu.handle_keyboard_press, self)
         )
         self.listener.start()
 
