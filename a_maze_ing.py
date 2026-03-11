@@ -3,6 +3,7 @@ from menu import Menu
 from parser import parsed_info
 from io import TextIOWrapper
 import sys
+from termios import tcflush, TCIFLUSH
 
 
 def main() -> None:
@@ -52,6 +53,7 @@ def main() -> None:
         menu.exiting = True
         print("Exiting...")
         sys.stdout.write("\033[?25h")  # show cursor
+        tcflush(sys.stdin, TCIFLUSH)  # removes all pending input in stdin
 
     def path_display() -> None:
         nonlocal path_state
