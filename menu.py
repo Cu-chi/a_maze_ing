@@ -1,7 +1,7 @@
-from pynput import keyboard
-from typing import Any, Callable
-import functools
+from typing import Any, Callable, Generator
 import sys
+import termios
+import contextlib
 
 
 class Menu:
@@ -9,15 +9,31 @@ class Menu:
         self.current_indexed: int = 0
         self.exiting: bool = False
         self.menu_list: list[tuple[str, Callable[[], Any]]] = []
-        self.need_refresh: bool = True
-        self.listener: keyboard.Listener = keyboard.Listener(
-            on_press=functools.partial(Menu.handle_keyboard_press, self)
-        )
-        self.listener.start()
 
     @staticmethod
     def set_cursor_position(x: int, y: int) -> None:
         sys.stdout.write(f"\033[{x};{y}H")
+
+    @staticmethod
+    @contextlib.contextmanager
+    def visualizator() -> Generator[None, None, None]:
+        fd: int = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        new_settings = termios.tcgetattr(fd)
+        # this will edit local config of stdin
+        # we disable echo (to avoid key pressed from being
+        # printed)
+        # we disable ICANON, so input is available immediately (without the
+        # user having to type a line-delimiter character
+        # man termios:
+        # https://man7.org/linux/man-pages/man3/termios.3.html
+        new_settings[3] &= ~(termios.ECHO | termios.ICANON)
+        try:
+            termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
+            yield  # execute code inside with statement
+        finally:
+            # on exit or error, we put back the original config
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
     @staticmethod
     def show(output: str) -> None:
@@ -33,19 +49,25 @@ class Menu:
             output += f"{i}: " + menu_data[0] + "\033[0m\n"
         return output
 
-    def handle_keyboard_press(self,
-                              key: keyboard.Key |
-                              keyboard.KeyCode |
-                              None) -> None:
-        try:
-            self.need_refresh = True
-            if keyboard.Key.up == key:
-                if self.current_indexed > 0:
-                    self.current_indexed -= 1
-            if keyboard.Key.down == key:
-                if self.current_indexed < len(self.menu_list) - 1:
-                    self.current_indexed += 1
-            if keyboard.Key.enter == key:
-                self.menu_list[self.current_indexed][1]()
-        except Exception:
-            pass
+    @staticmethod
+    def get_key() -> str:
+        char: str = sys.stdin.read(1)
+        if char == "\033":
+            char_special = sys.stdin.read(2)
+            char += char_special
+            if char == "\033[A":
+                return "UP"
+            elif char == "\033[B":
+                return "DOWN"
+        return char
+
+    def handle_keyboard_input(self) -> None:
+        key: str = self.get_key()
+        if key == "UP":
+            if self.current_indexed > 0:
+                self.current_indexed -= 1
+        if key == "DOWN":
+            if self.current_indexed < len(self.menu_list) - 1:
+                self.current_indexed += 1
+        if key == '\n':
+            self.menu_list[self.current_indexed][1]()

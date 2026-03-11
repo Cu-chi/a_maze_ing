@@ -71,7 +71,6 @@ def main() -> None:
         maze.draw_42()
         maze.generate(Algorithm.HAK)
         maze.solve_bfs()
-        menu.need_refresh = True
 
     def color_path() -> None:
         maze.rotate_color("PATH")
@@ -89,9 +88,8 @@ def main() -> None:
 
     new_maze()
     try:
-        while not menu.exiting:
-            sys.stdout.write("\033[2K")
-            if menu.need_refresh:
+        with menu.visualizator():
+            while not menu.exiting:
                 menu.menu_list = [
                     ("Generate a new maze", new_maze),
                     ("Show/Hide shortest path from the entrance to the exit",
@@ -103,9 +101,9 @@ def main() -> None:
                     (f"Seed: {maze.get_seed()}", lambda: None),
                     ("Exit", handle_exit)
                 ]
-                menu.need_refresh = False
                 sys.stdout.write("\033c\033[?25l")  # clear and hide cursor
                 menu.show(menu.append_menu(maze.visualize(path_state)))
+                menu.handle_keyboard_input()
     except KeyboardInterrupt:
         handle_exit()
 
