@@ -63,6 +63,35 @@ class MazeGenerator():
         self.DY: dict[int, int] = {self.N: -1, self.S: 1,
                                    self.E: 0, self.W: 0}
         self.path: list[point] = []
+        self.__fg_colors: list[str] = [
+            "\033[37m",
+            "\033[31m",
+            "\033[32m",
+            "\033[33m",
+            "\033[34m",
+            "\033[35m",
+            "\033[36m"
+        ]
+        self.__bg_colors: list[str] = [
+            "\033[41m",
+            "\033[42m",
+            "\033[43m",
+            "\033[44m",
+            "\033[45m",
+            "\033[46m",
+            "\033[47m",
+            "\033[100m",
+            "\033[101m",
+            "\033[102m",
+            "\033[103m",
+            "\033[104m",
+            "\033[105m",
+            "\033[106m",
+            "\033[107m",
+        ]
+        self.__wall_color: str = "\033[0m"
+        self.__42_color: str = "\033[107m"
+        self.__path_color: str = "\033[47m"
         self.create_grid()
 
     def create_grid(self) -> None:
@@ -172,33 +201,57 @@ class MazeGenerator():
                 and p != self.__entry
                 and p != self.__exit)
 
+    def rotate_color(self, type: str) -> None:
+        current: str
+        if type == "PATH":
+            current = self.__path_color
+            while self.__path_color == current:
+                self.__path_color = self.__bg_colors[
+                    random.randrange(0, len(self.__bg_colors))]
+        elif type == "42":
+            current = self.__42_color
+            while self.__42_color == current:
+                self.__42_color = self.__bg_colors[
+                    random.randrange(0, len(self.__bg_colors))]
+        elif type == "WALL":
+            current = self.__wall_color
+            while self.__wall_color == current:
+                self.__wall_color = self.__fg_colors[
+                    random.randrange(0, len(self.__fg_colors))]
+
     def visualize(self, display_path: bool) -> str:
         visualization: str = ""
-        visualization += "▄▄▄▄" * (self.__width) + "▄"
+        visualization += \
+            self.__wall_color + "▄▄▄▄" * (self.__width) + "▄\033[0m"
         for y in range(self.__height):
-            visualization += "\n█"
+            visualization += f"\n{self.__wall_color}█\033[0m"
             is_south_closed: bool
             is_east_closed: bool
             is_42: bool
             for is_top in [True, False]:
                 if not is_top:
-                    visualization += "\n█"
+                    visualization += f"\n{self.__wall_color}█\033[0m"
                 for x in range(self.__width):
                     visualization += self.draw_entry_exit((x, y))
                     is_south_closed, is_east_closed, is_42 = self.is_closed(x,
                                                                             y)
                     path: bool = self.is_cell_path((x, y)) and display_path
                     if path:
-                        visualization += "\033[47m"
+                        visualization += self.__path_color
                     if is_top:
-                        visualization += "███" if is_42 else "   "
+                        if is_42:
+                            visualization += self.__42_color
+                        visualization += "   "
                     else:
-                        visualization += "▄▄▄" if is_south_closed \
-                            and not is_42 else ("███" if is_42
-                                                else "   ")
+                        visualization += self.__wall_color
+                        if is_42:
+                            visualization += self.__42_color
+                        visualization += "▄▄▄" \
+                            if is_south_closed else "   "
                     visualization += "\033[0m"
+                    visualization += self.__wall_color
                     if path:
-                        visualization += "\033[47m"
+                        visualization += self.__path_color
                     visualization += "█" if is_east_closed \
                         else (" " if is_top else "▄")
                     visualization += "\033[0m"

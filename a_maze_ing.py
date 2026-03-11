@@ -73,6 +73,20 @@ def main() -> None:
         maze.solve_bfs()
         menu.need_refresh = True
 
+    def color_path() -> None:
+        maze.rotate_color("PATH")
+
+    def color_42() -> None:
+        maze.rotate_color("42")
+
+    def color_wall() -> None:
+        maze.rotate_color("WALL")
+
+    def color_random() -> None:
+        color_path()
+        color_42()
+        color_wall()
+
     new_maze()
     try:
         while not menu.exiting:
@@ -82,8 +96,10 @@ def main() -> None:
                     ("Generate a new maze", new_maze),
                     ("Show/Hide shortest path from the entrance to the exit",
                         path_display),
-                    ("Change maze wall colours", lambda: None),
-                    ("Edit colours of the 42 pattern", lambda: None),
+                    ("Change maze wall colours", color_wall),
+                    ("Change path colours", color_path),
+                    ("Change 42 colours", color_42),
+                    ("Random colours", color_random),
                     (f"Seed: {maze.get_seed()}", lambda: None),
                     ("Exit", handle_exit)
                 ]
