@@ -76,6 +76,7 @@ def main() -> None:
     new_maze()
     try:
         while not menu.exiting:
+            sys.stdout.write("\033[2K")
             if menu.need_refresh:
                 menu.menu_list = [
                     ("Generate a new maze", new_maze),
