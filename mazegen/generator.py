@@ -1,10 +1,13 @@
 from mazegen.algorithms import Algorithm, DFS, HAK
 from mazegen.utils import grid, point
+from typing import Optional
+import random
 
 
 class MazeGenerator():
     def __init__(self, width: int, height: int,
-                 entry: point, exit: point) -> None:
+                 entry: point, exit: point,
+                 seed: Optional[int] = None) -> None:
         """Initialize a MazeGenerator
 
         This class takes all settings of the maze and validates them
@@ -47,6 +50,12 @@ class MazeGenerator():
         self.__height: int = height
         self.__entry: point = entry
         self.__exit: point = exit
+
+        if seed is None:
+            seed = random.randint(1000000, 2700000000)
+        self.__seed: int = seed
+        self.__next_seed: int | None = None
+
         self.__grid: grid
         self.N, self.E, self.S, self.W = 1, 2, 4, 8
         self.DX: dict[int, int] = {self.N: 0, self.S: 0,
@@ -93,7 +102,14 @@ class MazeGenerator():
         x_placement, y_placement = self.draw_line(x_placement, y_placement,
                                                   x_placement + 2, y_placement)
 
+    def get_seed(self) -> int:
+        return self.__seed
+
     def generate(self, algorithm: Algorithm) -> grid:
+        if self.__next_seed is not None:
+            self.__seed = self.__next_seed
+        self.__next_seed = random.randint(1000000, 2700000000)
+        random.seed(self.__seed)
         match algorithm:
             case Algorithm.DFS:
                 self.__grid = DFS(self.__grid).generate()

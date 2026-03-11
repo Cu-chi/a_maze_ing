@@ -43,9 +43,16 @@ def main() -> None:
     except ValueError:
         print("Error: exit has to be a tuple of integers.")
         return
+    seed: int | None = None
+    try:
+        if "SEED" in data:
+            seed = int(data["SEED"])
+    except ValueError:
+        print("Error: seed has to be a int.")
+        return
 
     sys.setrecursionlimit(1000000)
-    maze: MazeGenerator = MazeGenerator(width, height, entry, exit)
+    maze: MazeGenerator = MazeGenerator(width, height, entry, exit, seed)
     path_state: bool = False
     menu: Menu = Menu()
 
@@ -66,18 +73,19 @@ def main() -> None:
         maze.solve_bfs()
         menu.need_refresh = True
 
-    menu.menu_list = [
-        ("Generate a new maze", new_maze),
-        ("Show/Hide shortest path from the entrance to the exit",
-            path_display),
-        ("Change maze wall colours", lambda: None),
-        ("Edit colours of the 42 pattern", lambda: None),
-        ("Exit", handle_exit)
-    ]
     new_maze()
     try:
         while not menu.exiting:
             if menu.need_refresh:
+                menu.menu_list = [
+                    ("Generate a new maze", new_maze),
+                    ("Show/Hide shortest path from the entrance to the exit",
+                        path_display),
+                    ("Change maze wall colours", lambda: None),
+                    ("Edit colours of the 42 pattern", lambda: None),
+                    (f"Seed: {maze.get_seed()}", lambda: None),
+                    ("Exit", handle_exit)
+                ]
                 menu.need_refresh = False
                 sys.stdout.write("\033c\033[?25l")  # clear and hide cursor
                 menu.show(menu.append_menu(maze.visualize(path_state)))
