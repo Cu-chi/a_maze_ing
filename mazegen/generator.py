@@ -1,6 +1,6 @@
 from mazegen.algorithms import Algorithm, DFS, HAK
 from mazegen.utils import grid, point, Directions, FG_COLORS, BG_COLORS
-from typing import Optional
+from typing import Optional, Literal
 import random
 
 
@@ -12,12 +12,37 @@ class MazeGenerator():
 
         This class takes all settings of the maze and validates them
         to create the base grid.
+        At instantiation it create a grid, but if you want to
+        use the same instance to re-generate a maze, you should
+        use the `create_grid()` method to clear the old grid
+
+        Example:
+        ```
+        # instantiate the maze generator
+        maze = MazeGenerator(10, 10, (0, 0), (9, 9))
+
+        # this will set a special flag in the grid
+        # for the 42 cells at the middle
+        maze.draw_42()
+
+        # generate the maze using an algorithm of mazegen.algorithms
+        # it will fill the grid
+        maze.generate(Algorithm.DFS)
+
+        # it returns the path in order from the entry to the exit cell
+        # mandatory if you want to print the path in the visualization
+        maze.solver()
+
+        # visualize the maze (boolean for the visibility of the path)
+        print(maze.visualize(True))
+        ```
 
         Args:
             width (int): Width of the maze
             height (int): Height of the maze
             entry (tuple[int, int]): Coordinates of the entry point
             exit (tuple[int, int]): Coordinates of the exit point
+            seed (Optional[int]): seed to use for the generation
 
         Raises:
             ValueError: if width is lower than 2
@@ -65,49 +90,70 @@ class MazeGenerator():
         self.create_grid()
 
     def create_grid(self) -> None:
+        """Initialize the grid with walls everywhere
+        must be used before re-generating a maze to prevent
+        undefined behavior of algorithms
+        """
         self.__grid = [[0 for _ in range(self.__width)]
                        for _ in range(self.__height)]
 
-    def draw_line(self, x: int, y: int, x2: int, y2: int) -> tuple[int, int]:
+    def __draw_line(self, x: int, y: int, x2: int, y2: int) -> tuple[int, int]:
         for ny in range(y2 - y + 1):
             for nx in range(x2 - x + 1):
                 self.__grid[y + ny][x + nx] = -1
         return x2, y2
 
     def draw_42(self) -> None:
-        x_placement: int = int(self.__width / 2) - \
+        """Draw 42 at the center of the grid
+        it puts -1 flag in the 42 cells
+        """
+        x_pos: int = int(self.__width / 2) - \
             (3 if self.__width % 2 else 4)
-        y_placement: int = int(self.__height / 2) - \
+        y_pos: int = int(self.__height / 2) - \
             (2 if self.__height % 2 else 3)
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement, y_placement + 2)
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement + 2, y_placement)
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement, y_placement + 2)
-        y_placement -= 4
-        x_placement += 2
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement + 2, y_placement)
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement, y_placement + 2)
-        x_placement -= 2
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement, y_placement + 2)
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement + 2, y_placement)
-        x_placement -= 2
-        y_placement -= 2
-        x_placement, y_placement = self.draw_line(x_placement, y_placement,
-                                                  x_placement + 2, y_placement)
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos, y_pos + 2)
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos + 2, y_pos)
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos, y_pos + 2)
+        y_pos -= 4
+        x_pos += 2
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos + 2, y_pos)
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos, y_pos + 2)
+        x_pos -= 2
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos, y_pos + 2)
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos + 2, y_pos)
+        x_pos -= 2
+        y_pos -= 2
+        x_pos, y_pos = self.__draw_line(x_pos, y_pos, x_pos + 2, y_pos)
 
     def get_seed(self) -> int:
+        """Get the seed of the last generation
+
+        Returns:
+            int: the seed
+        """
         return self.__seed
 
     def get_algorithm(self) -> str:
+        """Get the algorithm used for the last generation
+
+        Returns:
+            str: algorithm key
+        """
         return self.__algorithm
 
     def generate(self, algorithm: Algorithm) -> grid:
+        """Generate the grid with the given algorithm
+        and the seed of the instance.
+
+        Args:
+            algorithm (Algorithm): The algorithm chosen
+
+        Raises:
+            ValueError: if algorithm key is not supported
+
+        Returns:
+            grid: the grid filled with flags for the walls
+        """
         if self.__next_seed is not None:
             self.__seed = self.__next_seed
         self.__next_seed = random.randint(1000000, 2700000000)
@@ -122,7 +168,7 @@ class MazeGenerator():
         self.__algorithm = algorithm.value
         return self.__grid
 
-    def is_closed(self, x: int, y: int) -> tuple[bool, bool, bool]:
+    def __is_closed(self, x: int, y: int) -> tuple[bool, bool, bool]:
         is_south_closed: bool = self.__grid[y][x] & Directions.S == 0
         is_east_closed: bool = self.__grid[y][x] & Directions.E == 0
         if self.__grid[y][x] == -1:
@@ -130,14 +176,14 @@ class MazeGenerator():
             is_east_closed = True
         return is_south_closed, is_east_closed, self.__grid[y][x] == -1
 
-    def draw_entry_exit(self, current_point: point) -> str:
+    def __draw_entry_exit(self, current_point: point) -> str:
         if self.__entry == current_point:
             return "\033[46m"
         if self.__exit == current_point:
             return "\033[103m"
         return ""
 
-    def solver_get_neighbours(self, x: int, y: int) -> list[point]:
+    def __solver_get_neighbours(self, x: int, y: int) -> list[point]:
         neighbours: list[point] = []
 
         # cell above
@@ -157,11 +203,11 @@ class MazeGenerator():
             neighbours.append((x + 1, y))
         return neighbours
 
-    def solver_step(self, m: grid, step: int) -> grid:
+    def __solver_step(self, m: grid, step: int) -> grid:
         for y in range(self.__height):
             for x in range(self.__width):
                 if m[y][x] == step:
-                    neighbours = self.solver_get_neighbours(x, y)
+                    neighbours = self.__solver_get_neighbours(x, y)
                     # for each neighbour, we set the number of step needed
                     for neighbour in neighbours:
                         neighbour_x, neighbour_y = neighbour
@@ -171,6 +217,10 @@ class MazeGenerator():
         return m
 
     def solver(self) -> None:
+        """This method will fill the path attribute of the instance
+        with the list in order from the entry to the exit of the
+        shortest path (in number of cell)
+        """
         # here we init a matrix with all cell at 0
         # entry cell is 1 because it's the first step
         m: grid = []
@@ -183,7 +233,7 @@ class MazeGenerator():
         m[entry_y][entry_x] = 1
         step: int = 1
         while m[exit_y][exit_x] == 0:
-            m = self.solver_step(m, step)
+            m = self.__solver_step(m, step)
             step += 1
         # here, we have a path to exit in m
         # so now we start from exit and we go in each cell
@@ -192,7 +242,7 @@ class MazeGenerator():
         path: list[point] = [self.__exit]
         path_x, path_y = self.__exit
         while step > 1:
-            neighbours = self.solver_get_neighbours(path_x, path_y)
+            neighbours = self.__solver_get_neighbours(path_x, path_y)
             for neighbour in neighbours:
                 neighbour_x, neighbour_y = neighbour
                 # if cell is reachable by a number of step - 1
@@ -235,12 +285,20 @@ class MazeGenerator():
             new_current = parents[new_current]
         self.__path = path[::-1]
 
-    def is_cell_path(self, p: point) -> bool:
+    def __is_cell_path(self, p: point) -> bool:
         return (p in self.__path
                 and p != self.__entry
                 and p != self.__exit)
 
-    def rotate_color(self, type: str) -> None:
+    def rotate_color(self, type: Literal["PATH", "42", "WALL"]) -> None:
+        """Rotate color attribute used in the visualization
+
+        Args:
+            type (Literal["PATH", "42", "WALL"]): the type of color to change
+
+        Raises:
+            ValueError: if type is not "PATH", "42" or "WALL"
+        """
         current: str
         if type == "PATH":
             current = self.__path_color
@@ -257,8 +315,11 @@ class MazeGenerator():
             while self.__wall_color == current:
                 self.__wall_color = FG_COLORS[
                     random.randrange(0, len(FG_COLORS))]
+        else:
+            raise ValueError(f"type '{type}' for rotatation of colors"
+                             " is not supported")
 
-    def conv_path_to_dir(self) -> str:
+    def __conv_path_to_dir(self) -> str:
         path_str: str = ""
         for i, cell in enumerate(self.__path):
             if i == 0:
@@ -276,6 +337,18 @@ class MazeGenerator():
         return path_str
 
     def output(self) -> str:
+        """Generate the output string:
+        each character represents a cell
+        0 means full opened and F wall on each side
+        each row represents a row of the maze
+        atfer the blank line, you have
+        the entry point, then
+        the exit point and then
+        the path with direction to follow to join the exit
+
+        Returns:
+            str: the output string
+        """
         inverted_grid: grid = []
         for y in range(self.__height):
             inverted_grid.append([])
@@ -291,10 +364,19 @@ class MazeGenerator():
             output += "\n"
         output += "\n{0},{1}".format(*self.__entry)
         output += "\n{0},{1}\n".format(*self.__exit)
-        output += f"{self.conv_path_to_dir()}\n"
+        output += f"{self.__conv_path_to_dir()}\n"
         return output
 
     def visualize(self, display_path: bool) -> str:
+        """Generate the string of the visualization of the maze
+        it also display the path from entry to exit if the argument is True
+
+        Args:
+            display_path (bool): display the shortest path
+
+        Returns:
+            str: the visualization
+        """
         visualization: str = ""
         visualization += \
             self.__wall_color + "▄▄▄▄" * (self.__width) + "▄\033[0m"
@@ -307,10 +389,10 @@ class MazeGenerator():
                 if not is_top:
                     visualization += f"\n{self.__wall_color}█\033[0m"
                 for x in range(self.__width):
-                    visualization += self.draw_entry_exit((x, y))
-                    is_south_closed, is_east_closed, is_42 = self.is_closed(x,
-                                                                            y)
-                    path: bool = self.is_cell_path((x, y)) and display_path
+                    visualization += self.__draw_entry_exit((x, y))
+                    is_south_closed, is_east_closed, is_42 = \
+                        self.__is_closed(x, y)
+                    path: bool = self.__is_cell_path((x, y)) and display_path
                     if path:
                         visualization += self.__path_color
                     if is_top:
