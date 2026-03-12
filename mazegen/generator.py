@@ -283,10 +283,7 @@ class MazeGenerator():
                 if self.__grid[y][x] == -1:
                     inverted_grid[y].append(0xF)
                 else:
-                    # & 0xF because the inverse of a bit
-                    # gives us a negative value
-                    # so we have to swap 0 and 1
-                    inverted_grid[y].append(~self.__grid[y][x] & 0xF)
+                    inverted_grid[y].append(self.__grid[y][x] ^ 0xF)
         output: str = ""
         for row in inverted_grid:
             for cell in row:
