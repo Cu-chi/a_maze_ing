@@ -70,7 +70,7 @@ def main() -> None:
         maze.create_grid()
         maze.draw_42()
         maze.generate(Algorithm.HAK)
-        maze.solve_bfs()
+        maze.solver()
 
     def color_path() -> None:
         maze.rotate_color("PATH")
