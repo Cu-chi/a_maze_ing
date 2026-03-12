@@ -258,6 +258,45 @@ class MazeGenerator():
                 self.__wall_color = FG_COLORS[
                     random.randrange(0, len(FG_COLORS))]
 
+    def conv_path_to_dir(self) -> str:
+        path_str: str = ""
+        for i, cell in enumerate(self.__path):
+            if i == 0:
+                continue
+            previous: point = self.__path[i - 1]
+            direction: point = (cell[0] - previous[0], cell[1] - previous[1])
+            if direction == (1, 0):
+                path_str += "E"
+            if direction == (-1, 0):
+                path_str += "W"
+            if direction == (0, -1):
+                path_str += "N"
+            if direction == (0, 1):
+                path_str += "S"
+        return path_str
+
+    def output(self) -> str:
+        inverted_grid: grid = []
+        for y in range(self.__height):
+            inverted_grid.append([])
+            for x in range(self.__width):
+                if self.__grid[y][x] == -1:
+                    inverted_grid[y].append(0xF)
+                else:
+                    # & 0xF because the inverse of a bit
+                    # gives us a negative value
+                    # so we have to swap 0 and 1
+                    inverted_grid[y].append(~self.__grid[y][x] & 0xF)
+        output: str = ""
+        for row in inverted_grid:
+            for cell in row:
+                output += f"{cell:X}"
+            output += "\n"
+        output += "\n{0},{1}".format(*self.__entry)
+        output += "\n{0},{1}\n".format(*self.__exit)
+        output += f"{self.conv_path_to_dir()}\n"
+        return output
+
     def visualize(self, display_path: bool) -> str:
         visualization: str = ""
         visualization += \
