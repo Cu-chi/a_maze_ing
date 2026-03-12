@@ -3,6 +3,7 @@ __author__ = "mchauvin, equentin. 42Lyon"
 
 from mazegen.generator import MazeGenerator
 from mazegen.algorithms import Algorithm
-from mazegen.utils import grid, point, Directions
+from mazegen.utils import grid, point, Directions, FG_COLORS, BG_COLORS
 
-__all__ = ["MazeGenerator", "grid", "point", "Algorithm", "Directions"]
+__all__ = ["MazeGenerator", "grid", "point", "Algorithm", "Directions",
+           "FG_COLORS", "BG_COLORS"]
