@@ -81,3 +81,8 @@ class Menu:
                 self.current_indexed += 1
         if key == '\n':
             self.menu_list[self.current_indexed][1]()
+        if key in "0123456789":
+            nb_key: int = int(key)
+            if nb_key < len(self.menu_list):
+                self.current_indexed = nb_key
+                self.menu_list[self.current_indexed][1]()
