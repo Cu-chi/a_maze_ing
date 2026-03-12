@@ -1,0 +1,18 @@
+[project]
+name = "a-maze-ing"
+version = "0.1.0"
+description = "Maze generation, multiple features: path finding, seed, different generation algorithms"
+authors = [
+    {name = "mchauvin mchauvin@student.42lyon.fr, equentin equentin@student.42lyon.fr"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flake8 (>=7.3.0,<8.0.0)",
+    "mypy (>=1.19.1,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

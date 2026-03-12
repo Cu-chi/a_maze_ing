@@ -1,19 +1,18 @@
 PYTHON = python3
 MAIN = a_maze_ing.py
 CONFIG = config.txt
-PIP = pip
 MYPY_FLAGS = --warn-return-any --warn-unused-ignores --ignore-missing-imports \
 --disallow-untyped-defs --check-untyped-defs
 VENV = .venv
 
 install:
-	$(PIP) install flake8 mypy pydantic
+	poetry install
 
 run:
-	$(PYTHON) $(MAIN) $(CONFIG)
+	poetry run $(PYTHON) $(MAIN) $(CONFIG)
 
 debug:
-	$(PYTHON) -m pdb $(MAIN) $(CONFIG)
+	poetry run $(PYTHON) -m pdb $(MAIN) $(CONFIG)
 
 clean:
 	@rm -rf __pycache__ .mypy_cache maze.txt **/__pycache__ **/.mypy_cache \
