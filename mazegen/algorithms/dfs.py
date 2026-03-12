@@ -19,5 +19,10 @@ class DFS(BaseAlgorithm):
                 self.dfs(nx, ny)
 
     def generate(self) -> grid:
+        """Fill the grid using the DFS algorithm
+
+        Returns:
+            grid: the grid of the maze
+        """
         self.dfs(0, 0)
         return self.grid

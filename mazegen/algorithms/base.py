@@ -16,6 +16,11 @@ class Algorithm(Enum):
 
 class BaseAlgorithm(ABC):
     def __init__(self, grid_: grid) -> None:
+        """Initialize the algorithm
+
+        Args:
+            grid_ (grid): the grid of the maze
+        """
         self.grid: grid = grid_
 
     @abstractmethod

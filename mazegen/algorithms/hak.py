@@ -42,6 +42,11 @@ class HAK(BaseAlgorithm):
         return None
 
     def generate(self) -> grid:
+        """Fill the grid using the HAK algorithm
+
+        Returns:
+            grid: the grid of the maze
+        """
         current: point | None = (0, 0)
         next: point | None = None
         while current:
