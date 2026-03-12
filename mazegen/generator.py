@@ -1,5 +1,5 @@
 from mazegen.algorithms import Algorithm, DFS, HAK
-from mazegen.utils import grid, point
+from mazegen.utils import grid, point, Directions
 from typing import Optional
 import random
 
@@ -57,11 +57,6 @@ class MazeGenerator():
         self.__next_seed: int | None = None
 
         self.__grid: grid
-        self.N, self.E, self.S, self.W = 1, 2, 4, 8
-        self.DX: dict[int, int] = {self.N: 0, self.S: 0,
-                                   self.E: 1, self.W: -1}
-        self.DY: dict[int, int] = {self.N: -1, self.S: 1,
-                                   self.E: 0, self.W: 0}
         self.path: list[point] = []
         self.__fg_colors: list[str] = [
             "\033[37m",
@@ -169,8 +164,8 @@ class MazeGenerator():
         visited: set[point] = {self.__entry}
         parents: dict[point, point | None] = {self.__entry: None}
         moves: list[tuple[int, int, int]] = [
-            (0, -1, self.N), (1, 0, self.E),
-            (0, 1, self.S), (-1, 0, self.W)
+            (0, -1, Directions.N), (1, 0, Directions.E),
+            (0, 1, Directions.S), (-1, 0, Directions.W)
         ]
         current: point = self.__entry
         while queue:
