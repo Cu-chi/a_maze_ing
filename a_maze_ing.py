@@ -101,7 +101,6 @@ def main() -> None:
                     (f"Seed: {maze.get_seed()}", lambda: None),
                     ("Exit", handle_exit)
                 ]
-                sys.stdout.write("\033c\033[?25l")  # clear and hide cursor
                 menu.show(menu.append_menu(maze.visualize(path_state)))
                 menu.handle_keyboard_input()
     except KeyboardInterrupt:

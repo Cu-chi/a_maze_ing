@@ -15,6 +15,14 @@ class Menu:
         sys.stdout.write(f"\033[{x};{y}H")
 
     @staticmethod
+    def clear_console() -> None:
+        sys.stdout.write("\033c")
+
+    @staticmethod
+    def hide_cursor() -> None:
+        sys.stdout.write("\033[?25l")
+
+    @staticmethod
     @contextlib.contextmanager
     def visualizator() -> Generator[None, None, None]:
         fd: int = sys.stdin.fileno()
@@ -37,6 +45,8 @@ class Menu:
 
     @staticmethod
     def show(output: str) -> None:
+        Menu.clear_console()
+        Menu.hide_cursor()
         Menu.set_cursor_position(0, 0)
         sys.stdout.write(output)
         sys.stdout.flush()
