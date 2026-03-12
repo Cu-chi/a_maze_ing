@@ -4,6 +4,7 @@ CONFIG = config.txt
 PIP = pip
 MYPY_FLAGS = --warn-return-any --warn-unused-ignores --ignore-missing-imports \
 --disallow-untyped-defs --check-untyped-defs
+VENV = .venv
 
 install:
 	$(PIP) install flake8 mypy pydantic
@@ -19,11 +20,11 @@ clean:
 	**/**/__pycache__
 
 lint:
-	$(PYTHON) -m flake8 .
+	$(PYTHON) -m flake8 . --exclude $(VENV)
 	$(PYTHON) -m mypy . $(MYPY_FLAGS)
 
 lint-strict:
-	$(PYTHON) -m flake8 .
+	$(PYTHON) -m flake8 . --exclude $(VENV)
 	$(PYTHON) -m mypy . $(MYPY_FLAGS) --strict
 
 .PHONY: install run debug clean lint lint-strict
