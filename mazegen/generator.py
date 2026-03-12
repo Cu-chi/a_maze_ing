@@ -57,7 +57,7 @@ class MazeGenerator():
         self.__next_seed: int | None = None
 
         self.__grid: grid
-        self.path: list[point] = []
+        self.__path: list[point] = []
         self.__wall_color: str = "\033[97m"
         self.__42_color: str = "\033[107m"
         self.__path_color: str = "\033[106m"
@@ -133,6 +133,72 @@ class MazeGenerator():
             return "\033[103m"
         return ""
 
+    def solver_get_neighbours(self, x: int, y: int) -> list[point]:
+        neighbours: list[point] = []
+
+        # cell above
+        if self.__grid[y][x] & Directions.N and y - 1 >= 0:
+            neighbours.append((x, y - 1))
+
+        # cell below
+        if self.__grid[y][x] & Directions.S and y + 1 < self.__height:
+            neighbours.append((x, y + 1))
+
+        # cell on the left
+        if self.__grid[y][x] & Directions.W and x - 1 >= 0:
+            neighbours.append((x - 1, y))
+
+        # cell on the right
+        if self.__grid[y][x] & Directions.E and x + 1 < self.__width:
+            neighbours.append((x + 1, y))
+        return neighbours
+
+    def solver_step(self, m: grid, step: int) -> grid:
+        for y in range(self.__height):
+            for x in range(self.__width):
+                if m[y][x] == step:
+                    neighbours = self.solver_get_neighbours(x, y)
+                    # for each neighbour, we set the number of step needed
+                    for neighbour in neighbours:
+                        neighbour_x, neighbour_y = neighbour
+                        # if cell hasn't already been visited
+                        if m[neighbour_y][neighbour_x] == 0:
+                            m[neighbour_y][neighbour_x] = step + 1
+        return m
+
+    def solver(self) -> None:
+        # here we init a matrix with all cell at 0
+        # entry cell is 1 because it's the first step
+        m: grid = []
+        for y in range(self.__height):
+            m.append([])
+            for _ in range(self.__width):
+                m[y].append(0)
+        exit_x, exit_y = self.__exit
+        entry_x, entry_y = self.__entry
+        m[entry_y][entry_x] = 1
+        step: int = 1
+        while m[exit_y][exit_x] == 0:
+            m = self.solver_step(m, step)
+            step += 1
+        # here, we have a path to exit in m
+        # so now we start from exit and we go in each cell
+        # that is the number of step needed to get in exit
+        # minus 1
+        path: list[point] = [self.__exit]
+        path_x, path_y = self.__exit
+        while step > 1:
+            neighbours = self.solver_get_neighbours(path_x, path_y)
+            for neighbour in neighbours:
+                neighbour_x, neighbour_y = neighbour
+                # if cell is reachable by a number of step - 1
+                if m[neighbour_y][neighbour_x] == step - 1:
+                    path.append((neighbour_x, neighbour_y))
+                    path_x, path_y = neighbour
+                    break
+            step -= 1
+        self.__path = path[::-1]
+
     def solve_bfs(self) -> None:
         queue: list[point] = [self.__entry]
         visited: set[point] = {self.__entry}
@@ -163,10 +229,10 @@ class MazeGenerator():
         while new_current is not None:
             path.append(new_current)
             new_current = parents[new_current]
-        self.path = path[::-1]
+        self.__path = path[::-1]
 
     def is_cell_path(self, p: point) -> bool:
-        return (p in self.path
+        return (p in self.__path
                 and p != self.__entry
                 and p != self.__exit)
 
