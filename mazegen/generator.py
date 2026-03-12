@@ -61,6 +61,7 @@ class MazeGenerator():
         self.__wall_color: str = "\033[97m"
         self.__42_color: str = "\033[107m"
         self.__path_color: str = "\033[106m"
+        self.__algorithm: str = ""
         self.create_grid()
 
     def create_grid(self) -> None:
@@ -103,6 +104,9 @@ class MazeGenerator():
     def get_seed(self) -> int:
         return self.__seed
 
+    def get_algorithm(self) -> str:
+        return self.__algorithm
+
     def generate(self, algorithm: Algorithm) -> grid:
         if self.__next_seed is not None:
             self.__seed = self.__next_seed
@@ -115,6 +119,7 @@ class MazeGenerator():
                 self.__grid = HAK(self.__grid).generate()
             case _:
                 raise ValueError("Algorithm is not supported")
+        self.__algorithm = algorithm.value
         return self.__grid
 
     def is_closed(self, x: int, y: int) -> tuple[bool, bool, bool]:

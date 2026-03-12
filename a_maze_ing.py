@@ -98,7 +98,8 @@ def main() -> None:
                     ("Change path colours", color_path),
                     ("Change 42 colours", color_42),
                     ("Random colours", color_random),
-                    (f"Seed: {maze.get_seed()}", lambda: None),
+                    (f"Seed: {maze.get_seed()} "
+                     f"(Algorithm: {maze.get_algorithm()})", lambda: None),
                     ("Exit", handle_exit)
                 ]
                 menu.show(menu.append_menu(maze.visualize(path_state)))

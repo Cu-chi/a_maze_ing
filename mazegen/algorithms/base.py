@@ -7,10 +7,10 @@ class Algorithm(Enum):
     """All supported algorithms
     """
 
-    DFS = 0
+    DFS = "DFS"
     """Depth-First-Search algorithm"""
 
-    HAK = 1
+    HAK = "HAK"
     """Hunt-And-Kill algorithm"""
 
 
