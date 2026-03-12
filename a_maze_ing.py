@@ -59,7 +59,7 @@ def main() -> None:
     def handle_exit() -> None:
         menu.exiting = True
         print("Exiting...")
-        sys.stdout.write("\033[?25h")  # show cursor
+        Menu.set_cursor_visibility(True)
         tcflush(sys.stdin, TCIFLUSH)  # removes all pending input in stdin
 
     def path_display() -> None:
