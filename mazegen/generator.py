@@ -1,5 +1,5 @@
 from mazegen.algorithms import Algorithm, DFS, HAK
-from mazegen.utils import grid, point, Directions
+from mazegen.utils import grid, point, Directions, FG_COLORS, BG_COLORS
 from typing import Optional
 import random
 
@@ -58,35 +58,9 @@ class MazeGenerator():
 
         self.__grid: grid
         self.path: list[point] = []
-        self.__fg_colors: list[str] = [
-            "\033[37m",
-            "\033[31m",
-            "\033[32m",
-            "\033[33m",
-            "\033[34m",
-            "\033[35m",
-            "\033[36m"
-        ]
-        self.__bg_colors: list[str] = [
-            "\033[41m",
-            "\033[42m",
-            "\033[43m",
-            "\033[44m",
-            "\033[45m",
-            "\033[46m",
-            "\033[47m",
-            "\033[100m",
-            "\033[101m",
-            "\033[102m",
-            "\033[103m",
-            "\033[104m",
-            "\033[105m",
-            "\033[106m",
-            "\033[107m",
-        ]
-        self.__wall_color: str = "\033[0m"
+        self.__wall_color: str = "\033[97m"
         self.__42_color: str = "\033[107m"
-        self.__path_color: str = "\033[47m"
+        self.__path_color: str = "\033[106m"
         self.create_grid()
 
     def create_grid(self) -> None:
@@ -201,18 +175,18 @@ class MazeGenerator():
         if type == "PATH":
             current = self.__path_color
             while self.__path_color == current:
-                self.__path_color = self.__bg_colors[
-                    random.randrange(0, len(self.__bg_colors))]
+                self.__path_color = BG_COLORS[
+                    random.randrange(0, len(BG_COLORS))]
         elif type == "42":
             current = self.__42_color
             while self.__42_color == current:
-                self.__42_color = self.__bg_colors[
-                    random.randrange(0, len(self.__bg_colors))]
+                self.__42_color = BG_COLORS[
+                    random.randrange(0, len(BG_COLORS))]
         elif type == "WALL":
             current = self.__wall_color
             while self.__wall_color == current:
-                self.__wall_color = self.__fg_colors[
-                    random.randrange(0, len(self.__fg_colors))]
+                self.__wall_color = FG_COLORS[
+                    random.randrange(0, len(FG_COLORS))]
 
     def visualize(self, display_path: bool) -> str:
         visualization: str = ""
