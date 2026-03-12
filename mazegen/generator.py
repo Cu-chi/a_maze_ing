@@ -123,9 +123,8 @@ class MazeGenerator():
         return self.__grid
 
     def is_closed(self, x: int, y: int) -> tuple[bool, bool, bool]:
-        E, S = 2, 4
-        is_south_closed: bool = self.__grid[y][x] & S == 0
-        is_east_closed: bool = self.__grid[y][x] & E == 0
+        is_south_closed: bool = self.__grid[y][x] & Directions.S == 0
+        is_east_closed: bool = self.__grid[y][x] & Directions.E == 0
         if self.__grid[y][x] == -1:
             is_south_closed = True
             is_east_closed = True
