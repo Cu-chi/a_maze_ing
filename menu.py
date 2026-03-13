@@ -79,9 +79,13 @@ class Menu:
         if key == "UP":
             if self.current_indexed > 0:
                 self.current_indexed -= 1
+            else:
+                self.current_indexed = len(self.menu_list) - 1
         if key == "DOWN":
             if self.current_indexed < len(self.menu_list) - 1:
                 self.current_indexed += 1
+            else:
+                self.current_indexed = 0
         if key == '\n':
             self.menu_list[self.current_indexed][1]()
         if key in "0123456789":
