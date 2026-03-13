@@ -86,6 +86,18 @@ def main() -> None:
         color_42()
         color_wall()
 
+    def change_algo() -> None:
+        if maze.get_algorithm() == "HAK":
+            maze.create_grid()
+            maze.draw_42()
+            maze.generate(Algorithm.DFS)
+            maze.solver()
+        elif maze.get_algorithm() == "DFS":
+            maze.create_grid()
+            maze.draw_42()
+            maze.generate(Algorithm.HAK)
+            maze.solver()
+
     new_maze()
     try:
         with menu.visualizator():
@@ -100,6 +112,7 @@ def main() -> None:
                     ("Random colours", color_random),
                     (f"Seed: {maze.get_seed()} "
                      f"(Algorithm: {maze.get_algorithm()})", lambda: None),
+                    ("Switch algorithm", change_algo),
                     ("Exit", handle_exit)
                 ]
                 menu.show(menu.append_menu(maze.visualize(path_state)))
