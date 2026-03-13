@@ -253,38 +253,6 @@ class MazeGenerator():
             step -= 1
         self.__path = path[::-1]
 
-    def solve_bfs(self) -> None:
-        queue: list[point] = [self.__entry]
-        visited: set[point] = {self.__entry}
-        parents: dict[point, point | None] = {self.__entry: None}
-        moves: list[tuple[int, int, int]] = [
-            (0, -1, Directions.N), (1, 0, Directions.E),
-            (0, 1, Directions.S), (-1, 0, Directions.W)
-        ]
-        current: point = self.__entry
-        while queue:
-            current = queue.pop(0)
-            if current == self.__exit:
-                break
-            cx, cy = current
-            for dx, dy, bit in moves:
-                nx, ny = cx + dx, cy + dy
-                if 0 <= nx < self.__width and 0 <= ny < self.__height:
-                    if self.__grid[cy][cx] != -1 and (self.__grid[cy][cx]
-                                                      & bit):
-                        if (nx, ny) not in visited:
-                            visited.add((nx, ny))
-                            parents[(nx, ny)] = current
-                            queue.append((nx, ny))
-        path: list[point] = []
-        if current != self.__exit:
-            return
-        new_current: point | None = self.__exit
-        while new_current is not None:
-            path.append(new_current)
-            new_current = parents[new_current]
-        self.__path = path[::-1]
-
     def __is_cell_path(self, p: point) -> bool:
         return (p in self.__path
                 and p != self.__entry
