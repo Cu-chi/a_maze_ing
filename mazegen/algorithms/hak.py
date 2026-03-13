@@ -20,8 +20,8 @@ class HAK(BaseAlgorithm):
             ny: int = cy + Dir.DY[dir]
             if (0 <= ny < len(self.grid)) and (0 <= nx < len(self.grid[ny])) \
                and not self.visited[ny][nx] and self.grid[ny][nx] != -1:
-                self.grid[cy][cx] |= dir
-                self.grid[ny][nx] |= Dir.OPPOSITE[dir]
+                self.grid[cy][cx] ^= dir
+                self.grid[ny][nx] ^= Dir.OPPOSITE[dir]
                 return (ny, nx)
         return None
 
@@ -35,8 +35,8 @@ class HAK(BaseAlgorithm):
                         if (0 <= ny < len(self.grid)) and \
                             (0 <= nx < len(self.grid[ny])) \
                                 and self.visited[ny][nx]:
-                            self.grid[cy][cx] |= direction
-                            self.grid[ny][nx] |= Dir.OPPOSITE[direction]
+                            self.grid[cy][cx] ^= direction
+                            self.grid[ny][nx] ^= Dir.OPPOSITE[direction]
                             self.visited[cy][cx] = True
                             return (cy, cx)
         return None

@@ -13,9 +13,9 @@ class DFS(BaseAlgorithm):
             ny: int = cy + Dir.DY[dir]
 
             if (0 <= ny < len(self.grid)) and (0 <= nx < len(self.grid[ny])) \
-               and self.grid[ny][nx] == 0:
-                self.grid[cy][cx] = self.grid[cy][cx] | dir
-                self.grid[ny][nx] = self.grid[ny][nx] | Dir.OPPOSITE[dir]
+               and self.grid[ny][nx] == 0xF:
+                self.grid[cy][cx] ^= dir
+                self.grid[ny][nx] ^= Dir.OPPOSITE[dir]
                 self.dfs(nx, ny)
 
     def generate(self) -> grid:
