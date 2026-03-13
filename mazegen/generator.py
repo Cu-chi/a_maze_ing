@@ -94,7 +94,7 @@ class MazeGenerator():
         must be used before re-generating a maze to prevent
         undefined behavior of algorithms
         """
-        self.__grid = [[0 for _ in range(self.__width)]
+        self.__grid = [[0xF for _ in range(self.__width)]
                        for _ in range(self.__height)]
 
     def __draw_line(self, x: int, y: int, x2: int, y2: int) -> tuple[int, int]:
@@ -169,8 +169,8 @@ class MazeGenerator():
         return self.__grid
 
     def __is_closed(self, x: int, y: int) -> tuple[bool, bool, bool]:
-        is_south_closed: bool = self.__grid[y][x] & Directions.S == 0
-        is_east_closed: bool = self.__grid[y][x] & Directions.E == 0
+        is_south_closed: bool = self.__grid[y][x] & Directions.S != 0
+        is_east_closed: bool = self.__grid[y][x] & Directions.E != 0
         if self.__grid[y][x] == -1:
             is_south_closed = True
             is_east_closed = True
@@ -187,19 +187,19 @@ class MazeGenerator():
         neighbours: list[point] = []
 
         # cell above
-        if self.__grid[y][x] & Directions.N and y - 1 >= 0:
+        if not self.__grid[y][x] & Directions.N and y - 1 >= 0:
             neighbours.append((x, y - 1))
 
         # cell below
-        if self.__grid[y][x] & Directions.S and y + 1 < self.__height:
+        if not self.__grid[y][x] & Directions.S and y + 1 < self.__height:
             neighbours.append((x, y + 1))
 
         # cell on the left
-        if self.__grid[y][x] & Directions.W and x - 1 >= 0:
+        if not self.__grid[y][x] & Directions.W and x - 1 >= 0:
             neighbours.append((x - 1, y))
 
         # cell on the right
-        if self.__grid[y][x] & Directions.E and x + 1 < self.__width:
+        if not self.__grid[y][x] & Directions.E and x + 1 < self.__width:
             neighbours.append((x + 1, y))
         return neighbours
 
@@ -349,18 +349,13 @@ class MazeGenerator():
         Returns:
             str: the output string
         """
-        inverted_grid: grid = []
-        for y in range(self.__height):
-            inverted_grid.append([])
-            for x in range(self.__width):
-                if self.__grid[y][x] == -1:
-                    inverted_grid[y].append(0xF)
-                else:
-                    inverted_grid[y].append(self.__grid[y][x] ^ 0xF)
         output: str = ""
-        for row in inverted_grid:
+        for row in self.__grid:
             for cell in row:
-                output += f"{cell:X}"
+                if cell == -1:
+                    output += "F"
+                else:
+                    output += f"{cell:X}"
             output += "\n"
         output += "\n{0},{1}".format(*self.__entry)
         output += "\n{0},{1}\n".format(*self.__exit)
