@@ -4,14 +4,16 @@ from menu import Menu
 from parser import parsed_info
 from parser import get_point
 from parser import get_int
-from io import TextIOWrapper
 import sys
 from termios import tcflush, TCIFLUSH
 
 
 def main() -> None:
-    file: TextIOWrapper = open("config.txt")
-    data: dict[str, str] = parsed_info(file)
+    try:
+        with open("config.txt", "r") as file:
+            data: dict[str, str] = parsed_info(file)
+    except FileNotFoundError:
+        print("Error opening the configuration file.")
     try:
         width: int = get_int(data, "WIDTH")
         height: int = get_int(data, "HEIGHT")
