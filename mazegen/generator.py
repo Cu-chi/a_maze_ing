@@ -141,7 +141,8 @@ class MazeGenerator():
         """
         return self.__algorithm
 
-    def generate(self, algorithm: Algorithm) -> grid:
+    def generate(self, algorithm: Algorithm, seed: Optional[int]
+                 | None) -> grid:
         """Generate the grid with the given algorithm
         and the seed of the instance.
 
@@ -154,9 +155,12 @@ class MazeGenerator():
         Returns:
             grid: the grid filled with flags for the walls
         """
-        if self.__next_seed is not None:
-            self.__seed = self.__next_seed
-        self.__next_seed = random.randint(1000000, 2700000000)
+        if seed is not None:
+            self.__seed = seed
+        else:
+            if self.__next_seed is not None:
+                self.__seed = self.__next_seed
+            self.__next_seed = random.randint(1000000, 2700000000)
         random.seed(self.__seed)
         match algorithm:
             case Algorithm.DFS:

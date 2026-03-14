@@ -42,7 +42,7 @@ def main() -> None:
     def new_maze() -> None:
         maze.create_grid()
         maze.draw_42()
-        maze.generate(Algorithm.DFS)
+        maze.generate(Algorithm.DFS, None)
         maze.solver()
 
     def color_path() -> None:
@@ -60,16 +60,13 @@ def main() -> None:
         color_wall()
 
     def change_algo() -> None:
-        if maze.get_algorithm() == "HAK":
-            maze.create_grid()
-            maze.draw_42()
-            maze.generate(Algorithm.DFS)
-            maze.solver()
-        elif maze.get_algorithm() == "DFS":
-            maze.create_grid()
-            maze.draw_42()
-            maze.generate(Algorithm.HAK)
-            maze.solver()
+        current_seed: int = maze.get_seed()
+        switch_algo = Algorithm.DFS \
+            if maze.get_algorithm() == "HAK" else Algorithm.HAK
+        maze.create_grid()
+        maze.draw_42()
+        maze.generate(switch_algo, seed=current_seed)
+        maze.solver()
 
     new_maze()
     try:
