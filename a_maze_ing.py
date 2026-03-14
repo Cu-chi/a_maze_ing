@@ -50,9 +50,12 @@ def main() -> None:
     except ValueError:
         print("Error: seed has to be a int.")
         return
-
-    sys.setrecursionlimit(1000000)
-    maze: MazeGenerator = MazeGenerator(width, height, entry, exit, seed)
+    try:
+        sys.setrecursionlimit(1000000)
+        maze: MazeGenerator = MazeGenerator(width, height, entry, exit, seed)
+    except ValueError as e:
+        print(f"Error: {e}")
+        return
     path_state: bool = False
     menu: Menu = Menu()
 
@@ -69,7 +72,7 @@ def main() -> None:
     def new_maze() -> None:
         maze.create_grid()
         maze.draw_42()
-        maze.generate(Algorithm.HAK)
+        maze.generate(Algorithm.DFS)
         maze.solver()
 
     def color_path() -> None:
@@ -110,9 +113,9 @@ def main() -> None:
                     ("Change path colours", color_path),
                     ("Change 42 colours", color_42),
                     ("Random colours", color_random),
+                    ("Switch algorithm", change_algo),
                     (f"Seed: {maze.get_seed()} "
                      f"(Algorithm: {maze.get_algorithm()})", lambda: None),
-                    ("Switch algorithm", change_algo),
                     ("Exit", handle_exit)
                 ]
                 menu.show(menu.append_menu(maze.visualize(path_state)))
