@@ -1,6 +1,9 @@
 from mazegen import MazeGenerator, Algorithm
+from mazegen.utils import point
 from menu import Menu
 from parser import parsed_info
+from parser import get_point
+from parser import get_int
 from io import TextIOWrapper
 import sys
 from termios import tcflush, TCIFLUSH
@@ -10,51 +13,16 @@ def main() -> None:
     file: TextIOWrapper = open("config.txt")
     data: dict[str, str] = parsed_info(file)
     try:
-        if "WIDTH" in data:
-            width: int = int(data["WIDTH"])
-    except ValueError:
-        print("Error: width has to be a integer.")
-        return
-    try:
-        if "HEIGHT" in data:
-            height: int = int(data["HEIGHT"])
-    except ValueError:
-        print("Error: height has to be a integer.")
-        return
-    try:
-        if "ENTRY" in data:
-            entry_str: str = data["ENTRY"]
-        if isinstance(entry_str, str):
-            entries: list[str] = entry_str.split(",")
-            first_entry = int(entries[0])
-            second_entry = int(entries[1])
-            entry: tuple[int, int] = (first_entry, second_entry)
-    except ValueError:
-        print("Error: entry has to be a tuple of integers.")
-        return
-    try:
-        if "EXIT" in data:
-            exit_str: str = data["EXIT"]
-        if isinstance(exit_str, str):
-            exits: list[str] = exit_str.split(",")
-            first_exit = int(exits[0])
-            second_exit = int(exits[1])
-            exit: tuple[int, int] = (first_exit, second_exit)
-    except ValueError:
-        print("Error: exit has to be a tuple of integers.")
-        return
-    seed: int | None = None
-    try:
-        if "SEED" in data:
-            seed = int(data["SEED"])
-    except ValueError:
-        print("Error: seed has to be a int.")
-        return
-    try:
+        width: int = get_int(data, "WIDTH")
+        height: int = get_int(data, "HEIGHT")
+        entry: point = get_point(data, "ENTRY")
+        exit: point = get_point(data, "EXIT")
+        seed: int | None = None
+        seed = int(data["SEED"]) if "SEED" in data else None
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exit, seed)
-    except ValueError as e:
-        print(f"Error: {e}")
+    except (ValueError, KeyError) as e:
+        print(f"Config error: {e}")
         return
     path_state: bool = False
     menu: Menu = Menu()
