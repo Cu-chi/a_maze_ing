@@ -86,7 +86,7 @@ def main() -> None:
                     ("Exit", handle_exit)
                 ]
                 menu.show(menu.append_menu(maze.visualize(path_state)))
-                with open("output.txt", "w") as file:
+                with open("maze.txt", "w") as file:
                     file.write(maze.output())
                 menu.handle_keyboard_input()
     except KeyboardInterrupt:
