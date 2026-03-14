@@ -1,9 +1,9 @@
 from mazegen import MazeGenerator, Algorithm
 from mazegen.utils import point
 from menu import Menu
-from parser import parsed_info
-from parser import get_point
-from parser import get_int
+from parser import (parsed_info,
+                    get_point,
+                    get_int)
 import sys
 from termios import tcflush, TCIFLUSH
 
@@ -18,11 +18,11 @@ def main() -> None:
         width: int = get_int(data, "WIDTH")
         height: int = get_int(data, "HEIGHT")
         entry: point = get_point(data, "ENTRY")
-        exit: point = get_point(data, "EXIT")
+        exits: point = get_point(data, "EXIT")
         seed: int | None = None
         seed = int(data["SEED"]) if "SEED" in data else None
         sys.setrecursionlimit(1000000)
-        maze: MazeGenerator = MazeGenerator(width, height, entry, exit, seed)
+        maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
     except (ValueError, KeyError) as e:
         print(f"Config error: {e}")
         return
