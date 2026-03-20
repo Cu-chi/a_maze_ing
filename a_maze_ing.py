@@ -1,4 +1,4 @@
-from mazegen import MazeGenerator, Algorithm
+from mazegen import MazeGenerator, Algorithm, DrawError
 from mazegen.utils import point
 from menu import Menu
 from parser import (parsed_info,
@@ -68,8 +68,8 @@ def main() -> None:
         maze.generate(switch_algo, seed=current_seed)
         maze.solver()
 
-    new_maze()
     try:
+        new_maze()
         with menu.visualizator():
             while not menu.exiting:
                 menu.menu_list = [
@@ -89,6 +89,10 @@ def main() -> None:
                 with open("maze.txt", "w") as file:
                     file.write(maze.output())
                 menu.handle_keyboard_input()
+    except DrawError as e:
+        print("Caught DrawError, we were unable to draw:\n"
+              f"{e}")
+        handle_exit()
     except KeyboardInterrupt:
         handle_exit()
 
