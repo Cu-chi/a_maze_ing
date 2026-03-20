@@ -4,6 +4,12 @@ from typing import Optional, Literal
 import random
 
 
+class DrawError(Exception):
+    """Error drawing
+    """
+    pass
+
+
 class MazeGenerator():
     def __init__(self, width: int, height: int,
                  entry: point, exit: point,
@@ -100,12 +106,17 @@ class MazeGenerator():
     def __draw_line(self, x: int, y: int, x2: int, y2: int) -> tuple[int, int]:
         for ny in range(y2 - y + 1):
             for nx in range(x2 - x + 1):
+                if x + nx == self.__entry[0] and y + ny == self.__entry[1]\
+                   or x + nx == self.__exit[0] and y + ny == self.__exit[1]:
+                    raise DrawError(f"can't draw on ({x + nx}, {y + ny}),"
+                                    " it's an entry/exit point")
                 self.__grid[y + ny][x + nx] = -1
         return x2, y2
 
     def draw_42(self) -> None:
         """Draw 42 at the center of the grid
-        it puts -1 flag in the 42 cells
+        it puts -1 flag in the 42 cells.
+        Inner use of draw_line may raise a DrawError
         """
         x_pos: int = int(self.__width / 2) - \
             (3 if self.__width % 2 else 4)
