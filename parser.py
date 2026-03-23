@@ -5,6 +5,7 @@ from mazegen.utils import point
 class ConfigError(Exception):
     pass
 
+
 def parsed_info(file: TextIOWrapper) -> dict[str, str]:
     config: dict[str, str] = {}
     for line in file:
@@ -43,7 +44,9 @@ def get_point(data: dict[str, str], key: str) -> point:
 
 def get_bool(data: dict[str, str], key: str) -> bool:
     value: str | None = data.get(key)
-    clean_value: str = value.strip().lower()
+    clean_value: str
+    if value:
+        clean_value = value.strip().lower()
     if key not in data:
         raise KeyError(f"missing key : {key}")
 
