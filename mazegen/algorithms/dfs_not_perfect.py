@@ -17,7 +17,7 @@ class DFS_NOT_PERFECT(BaseAlgorithm):
                 self.grid[cy][cx] ^= dir
                 self.grid[ny][nx] ^= Dir.OPPOSITE[dir]
                 self.dfs(nx, ny)
-    
+
     @staticmethod
     def check_destruction(x: int, y: int, destroyed: list[point]) -> bool:
         return any(point_ in destroyed for point_ in [
@@ -27,7 +27,7 @@ class DFS_NOT_PERFECT(BaseAlgorithm):
             (x + 1, y + 1), (x - 1, y - 1), (x - 1, y + 1), (x + 1, y - 1)
         ])
 
-    def destroy_perfection(self):
+    def destroy_perfection(self) -> None:
         amount_to_destroy: int = len(self.grid)\
             if len(self.grid) > len(self.grid[0]) else len(self.grid[0])
         directions: list[int] = [Dir.N, Dir.S,
@@ -39,18 +39,20 @@ class DFS_NOT_PERFECT(BaseAlgorithm):
                 rx: int = random.randint(0, len(self.grid[0]) - 1)
                 ry: int = random.randint(0, len(self.grid) - 1)
                 random.shuffle(directions)
-                if self.grid[ry][rx] != -1: # and not self.check_destruction(rx, ry, destroyed_cells):
+                if self.grid[ry][rx] != -1\
+                   and not self.check_destruction(rx, ry, destroyed_cells):
                     for dir in directions:
                         nx: int = rx + Dir.DX[dir]
                         ny: int = ry + Dir.DY[dir]
-                        if (0 <= ny < len(self.grid)) and (0 <= nx < len(self.grid[ny]))\
-                            and self.grid[ry][rx] & dir and self.grid[ny][nx] != -1:
+                        if (0 <= ny < len(self.grid))\
+                           and (0 <= nx < len(self.grid[ny]))\
+                           and self.grid[ry][rx] & dir\
+                           and self.grid[ny][nx] != -1:
                             self.grid[ry][rx] ^= dir
                             self.grid[ny][nx] ^= Dir.OPPOSITE[dir]
                             destroyed_cells.append((rx, ry))
                             destroyed = True
                             break
-
 
     def generate(self) -> grid:
         """Fill the grid using the DFS algorithm

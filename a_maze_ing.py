@@ -17,7 +17,8 @@ def main() -> None:
         exits: point = get_point(data, "EXIT")
         seed: int | None = None
         seed = get_int(data, "SEED") if "SEED" in data else None
-        perfect_flag: bool = get_bool(data, "PERFECT") if "PERFECT" in data else False
+        perfect_flag: bool = get_bool(data, "PERFECT")\
+            if "PERFECT" in data else False
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
     except (ConfigError, FileNotFoundError) as e:
@@ -29,7 +30,7 @@ def main() -> None:
     def handle_exit(error: Optional[str] = None) -> None:
         menu.exiting = True
         if error:
-            print(f"Exiting due to error: \n{error}")
+            print(f"Exiting due to error:\n{error}")
         else:
             print("Exiting...")
         Menu.set_cursor_visibility(True)
@@ -42,7 +43,7 @@ def main() -> None:
     def new_maze() -> None:
         maze.create_grid()
         maze.draw_42()
-        if perfect_flag == False:
+        if not perfect_flag:
             maze.generate(Algorithm.DFS_NOT_PERFECT, None)
         else:
             maze.generate(Algorithm.DFS, None)
@@ -86,7 +87,7 @@ def main() -> None:
                     (f"Seed: {maze.get_seed()} "
                      f"(Algorithm: {maze.get_algorithm()})", lambda: None)
                 ]
-                if perfect_flag == True:
+                if perfect_flag:
                     menu.menu_list.append(("Switch algorithm", change_algo))
                 menu.menu_list.append(("Exit", handle_exit))
                 menu.show(menu.append_menu(maze.visualize(path_state)))
@@ -99,7 +100,7 @@ def main() -> None:
     except KeyboardInterrupt:
         handle_exit()
     except Exception as e:
-        handle_exit(e)
+        handle_exit(f"{e}")
 
 
 if __name__ == "__main__":

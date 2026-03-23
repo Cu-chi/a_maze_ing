@@ -19,11 +19,11 @@ clean:
 	**/**/__pycache__ maze.txt
 
 lint:
-	$(PYTHON) -m flake8 . --exclude $(VENV)
-	$(PYTHON) -m mypy . $(MYPY_FLAGS)
+	poetry run $(PYTHON) -m flake8 . --exclude $(VENV)
+	poetry run $(PYTHON) -m mypy . $(MYPY_FLAGS)
 
 lint-strict:
-	$(PYTHON) -m flake8 . --exclude $(VENV)
-	$(PYTHON) -m mypy . $(MYPY_FLAGS) --strict
+	poetry run $(PYTHON) -m flake8 . --exclude $(VENV)
+	poetry run $(PYTHON) -m mypy . $(MYPY_FLAGS) --strict
 
 .PHONY: install run debug clean lint lint-strict
