@@ -1,7 +1,7 @@
 from mazegen import MazeGenerator, Algorithm, DrawError
 from mazegen.utils import point
 from menu import Menu
-from parser import parsed_info, get_point, get_int
+from parser import parsed_info, get_point, get_int, get_bool, ConfigError
 import sys
 from termios import tcflush, TCIFLUSH
 from typing import Optional
@@ -11,18 +11,16 @@ def main() -> None:
     try:
         with open("config.txt", "r") as file:
             data: dict[str, str] = parsed_info(file)
-    except FileNotFoundError:
-        print("Error opening the configuration file.")
-    try:
         width: int = get_int(data, "WIDTH")
         height: int = get_int(data, "HEIGHT")
         entry: point = get_point(data, "ENTRY")
         exits: point = get_point(data, "EXIT")
         seed: int | None = None
         seed = get_int(data, "SEED") if "SEED" in data else None
+        perfect_flag: bool = get_bool(data, "PERFECT") if "PERFECT" in data else False
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
-    except (ValueError, KeyError) as e:
+    except (ConfigError, FileNotFoundError) as e:
         print(f"Config error: {e}")
         return
     path_state: bool = False
@@ -44,7 +42,10 @@ def main() -> None:
     def new_maze() -> None:
         maze.create_grid()
         maze.draw_42()
-        maze.generate(Algorithm.DFS, None)
+        if perfect_flag == False:
+            maze.generate(Algorithm.DFS_NOT_PERFECT, None)
+        else:
+            maze.generate(Algorithm.DFS, None)
         maze.solver()
 
     def color_path() -> None:
@@ -82,12 +83,14 @@ def main() -> None:
                     ("Change path colours", color_path),
                     ("Change 42 colours", color_42),
                     ("Random colours", color_random),
-                    ("Switch algorithm", change_algo),
                     (f"Seed: {maze.get_seed()} "
-                     f"(Algorithm: {maze.get_algorithm()})", lambda: None),
-                    ("Exit", handle_exit)
+                     f"(Algorithm: {maze.get_algorithm()})", lambda: None)
                 ]
+                if perfect_flag == True:
+                    menu.menu_list.append(("Switch algorithm", change_algo))
+                menu.menu_list.append(("Exit", handle_exit))
                 menu.show(menu.append_menu(maze.visualize(path_state)))
+
                 with open("maze.txt", "w") as file:
                     file.write(maze.output())
                 menu.handle_keyboard_input()
