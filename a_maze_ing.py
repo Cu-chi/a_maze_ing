@@ -17,8 +17,12 @@ def main() -> None:
         exits: point = get_point(data, "EXIT")
         seed: int | None = None
         seed = get_int(data, "SEED") if "SEED" in data else None
-        perfect_flag: bool = get_bool(data, "PERFECT")\
-            if "PERFECT" in data else False
+        perfect_flag: bool = get_bool(data, "PERFECT")
+        output_file_name: str | None = data.get("OUTPUT_FILE")
+        if output_file_name is None:
+            raise KeyError("missing key : OUTPUT_FILE")
+        elif not output_file_name.endswith(".txt"):
+            raise ValueError("OUTPUT_FILE must end with .txt")
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
     except (ConfigError, FileNotFoundError) as e:
@@ -95,7 +99,7 @@ def main() -> None:
                 menu.menu_list.append(("Exit", handle_exit))
                 menu.show(menu.append_menu(maze.visualize(path_state)))
 
-                with open("maze.txt", "w") as file:
+                with open(output_file_name, "w") as file:
                     file.write(maze.output())
                 menu.handle_keyboard_input()
     except DrawError as e:
