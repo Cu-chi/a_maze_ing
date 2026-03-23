@@ -1,4 +1,4 @@
-from mazegen.algorithms import Algorithm, DFS, HAK
+from mazegen.algorithms import Algorithm, DFS, HAK, DFS_NOT_PERFECT
 from mazegen.utils import grid, point, Directions, FG_COLORS, BG_COLORS
 from typing import Optional, Literal
 import random
@@ -178,6 +178,8 @@ class MazeGenerator():
                 self.__grid = DFS(self.__grid).generate()
             case Algorithm.HAK:
                 self.__grid = HAK(self.__grid).generate()
+            case Algorithm.DFS_NOT_PERFECT:
+                self.__grid = DFS_NOT_PERFECT(self.__grid).generate()
             case _:
                 raise ValueError("Algorithm is not supported")
         self.__algorithm = algorithm.value
