@@ -22,7 +22,10 @@ def main() -> None:
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
     except (ConfigError, FileNotFoundError) as e:
-        print(f"Config error: {e}")
+        print(f"Config error: {e}", file=sys.stderr)
+        return
+    except (ValueError, KeyError) as e:
+        print(f"Config error: {e}", file=sys.stderr)
         return
     path_state: bool = False
     menu: Menu = Menu()
@@ -30,7 +33,7 @@ def main() -> None:
     def handle_exit(error: Optional[str] = None) -> None:
         menu.exiting = True
         if error:
-            print(f"Exiting due to error:\n{error}")
+            print(f"Exiting due to error:\n{error}", file=sys.stderr)
         else:
             print("Exiting...")
         Menu.set_cursor_visibility(True)
