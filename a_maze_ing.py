@@ -1,9 +1,7 @@
 from mazegen import MazeGenerator, Algorithm, DrawError
 from mazegen.utils import point
 from menu import Menu
-from parser import (parsed_info,
-                    get_point,
-                    get_int)
+from parser import parsed_info, get_point, get_int
 import sys
 from termios import tcflush, TCIFLUSH
 
@@ -20,7 +18,7 @@ def main() -> None:
         entry: point = get_point(data, "ENTRY")
         exits: point = get_point(data, "EXIT")
         seed: int | None = None
-        seed = int(data["SEED"]) if "SEED" in data else None
+        seed = get_int(data, "SEED") if "SEED" in data else None
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
     except (ValueError, KeyError) as e:
