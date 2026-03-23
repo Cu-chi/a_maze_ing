@@ -13,6 +13,10 @@ class Algorithm(Enum):
     HAK = "HAK"
     """Hunt-And-Kill algorithm"""
 
+    DFS_NOT_PERFECT = "DFS_NOT_PERFECT"
+    """Depth-First-Search algorithm but not perfect because we
+    break random walls"""
+
 
 class BaseAlgorithm(ABC):
     def __init__(self, grid_: grid) -> None:
