@@ -4,6 +4,7 @@ from menu import Menu
 from parser import parsed_info, get_point, get_int
 import sys
 from termios import tcflush, TCIFLUSH
+from typing import Optional
 
 
 def main() -> None:
@@ -27,9 +28,12 @@ def main() -> None:
     path_state: bool = False
     menu: Menu = Menu()
 
-    def handle_exit() -> None:
+    def handle_exit(error: Optional[str] = None) -> None:
         menu.exiting = True
-        print("Exiting...")
+        if error:
+            print(f"Exiting due to error: \n{error}")
+        else:
+            print("Exiting...")
         Menu.set_cursor_visibility(True)
         tcflush(sys.stdin, TCIFLUSH)  # removes all pending input in stdin
 
@@ -88,11 +92,11 @@ def main() -> None:
                     file.write(maze.output())
                 menu.handle_keyboard_input()
     except DrawError as e:
-        print("Caught DrawError, we were unable to draw:\n"
-              f"{e}")
-        handle_exit()
+        handle_exit(f"Caught DrawError, we were unable to draw:\n{e}")
     except KeyboardInterrupt:
         handle_exit()
+    except Exception as e:
+        handle_exit(e)
 
 
 if __name__ == "__main__":
