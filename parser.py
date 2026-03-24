@@ -9,6 +9,8 @@ class ConfigError(Exception):
 def parsed_info(file: TextIOWrapper) -> dict[str, str]:
     config: dict[str, str] = {}
     for line in file:
+        if line.startswith("#"):
+            continue
         data: list[str] = line.split("=")
         if line == "\n":
             raise ConfigError("blank line in config.txt")
