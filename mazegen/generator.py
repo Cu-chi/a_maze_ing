@@ -93,6 +93,7 @@ class MazeGenerator():
         self.__42_color: str = "\033[107m"
         self.__path_color: str = "\033[106m"
         self.__algorithm: str = ""
+        self.__path_step: int = 0
         self.create_grid()
 
     def create_grid(self) -> None:
@@ -173,6 +174,7 @@ class MazeGenerator():
                 self.__seed = self.__next_seed
             self.__next_seed = random.randint(1000000, 2700000000)
         random.seed(self.__seed)
+        self.__path_step = 0
         match algorithm:
             case Algorithm.DFS:
                 self.__grid = DFS(self.__grid).generate()
@@ -347,6 +349,12 @@ class MazeGenerator():
         output += f"{self.__conv_path_to_dir()}\n"
         return output
 
+    def get_path_length(self) -> int:
+        return len(self.__path)
+
+    def reset_path_steps(self) -> None:
+        self.__path_step = 0
+
     def visualize(self, display_path: bool) -> str:
         """Generate the string of the visualization of the maze
         it also display the path from entry to exit if the argument is True
@@ -357,9 +365,14 @@ class MazeGenerator():
         Returns:
             str: the visualization
         """
+        if display_path and self.__path_step == 0:
+            self.__path_step = 1
+        elif display_path:
+            self.__path_step += 1
         visualization: str = ""
         visualization += \
             self.__wall_color + "▄▄▄▄" * (self.__width) + "▄\033[0m"
+        limited_path: list[point] = self.__path[:self.__path_step]
         for y in range(self.__height):
             visualization += f"\n{self.__wall_color}█\033[0m"
             is_south_closed: bool
@@ -373,7 +386,7 @@ class MazeGenerator():
                     is_south_closed, is_east_closed, is_42 = \
                         self.__is_closed(x, y)
                     path: bool = self.__is_cell_path((x, y)) and display_path
-                    if path:
+                    if path and (x, y) in limited_path:
                         visualization += self.__path_color
                     if is_top:
                         if is_42:
@@ -387,7 +400,7 @@ class MazeGenerator():
                             if is_south_closed else "   "
                     visualization += "\033[0m"
                     visualization += self.__wall_color
-                    if path:
+                    if path and (x, y) in limited_path:
                         visualization += self.__path_color
                     visualization += "█" if is_east_closed \
                         else (" " if is_top else "▄")
