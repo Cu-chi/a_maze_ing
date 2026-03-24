@@ -111,7 +111,9 @@ def main() -> None:
                 else:
                     for _ in range(path_steps - 1):
                         menu.show(menu.append_menu(maze.visualize(path_state)))
-                        time.sleep(max(0, 1 / maze.get_path_length()))
+                        delay: float = 1 / maze.get_path_length()
+                        if delay >= 0.001:
+                            time.sleep(delay)
                     path_steps = 0
                 menu.show(menu.append_menu(maze.visualize(path_state)))
 
