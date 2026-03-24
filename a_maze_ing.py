@@ -2,9 +2,10 @@ from mazegen import MazeGenerator, Algorithm, DrawError
 from mazegen.utils import point
 from menu import Menu
 from parser import parsed_info, get_point, get_int, get_bool, ConfigError
-import sys
 from termios import tcflush, TCIFLUSH
 from typing import Optional
+import sys
+import time
 
 
 def main() -> None:
@@ -32,6 +33,7 @@ def main() -> None:
         print(f"Config error: {e}", file=sys.stderr)
         return
     path_state: bool = False
+    path_steps: int = 0
     menu: Menu = Menu()
 
     def handle_exit(error: Optional[str] = None) -> None:
@@ -45,9 +47,13 @@ def main() -> None:
 
     def path_display() -> None:
         nonlocal path_state
+        nonlocal path_steps
         path_state = not path_state
+        maze.reset_path_steps()
+        path_steps = maze.get_path_length()
 
     def new_maze() -> None:
+        nonlocal path_steps
         maze.create_grid()
         maze.draw_42()
         if not perfect_flag:
@@ -55,6 +61,7 @@ def main() -> None:
         else:
             maze.generate(Algorithm.DFS, None)
         maze.solver()
+        path_steps = maze.get_path_length()
 
     def color_path() -> None:
         maze.rotate_color("PATH")
@@ -71,6 +78,7 @@ def main() -> None:
         color_wall()
 
     def change_algo() -> None:
+        nonlocal path_steps
         current_seed: int = maze.get_seed()
         switch_algo = Algorithm.DFS \
             if maze.get_algorithm() == "HAK" else Algorithm.HAK
@@ -78,6 +86,7 @@ def main() -> None:
         maze.draw_42()
         maze.generate(switch_algo, seed=current_seed)
         maze.solver()
+        path_steps = maze.get_path_length()
 
     try:
         new_maze()
@@ -97,10 +106,18 @@ def main() -> None:
                 if perfect_flag:
                     menu.menu_list.append(("Switch algorithm", change_algo))
                 menu.menu_list.append(("Exit", handle_exit))
+                if not path_state:
+                    path_steps = 0
+                else:
+                    for _ in range(path_steps - 1):
+                        menu.show(menu.append_menu(maze.visualize(path_state)))
+                        time.sleep(max(0, 1 / maze.get_path_length()))
+                    path_steps = 0
                 menu.show(menu.append_menu(maze.visualize(path_state)))
 
                 with open(output_file_name, "w") as file:
                     file.write(maze.output())
+                tcflush(sys.stdin, TCIFLUSH)
                 menu.handle_keyboard_input()
     except DrawError as e:
         handle_exit(f"Caught DrawError, we were unable to draw:\n{e}")
