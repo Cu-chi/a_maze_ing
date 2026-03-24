@@ -154,7 +154,7 @@ class MazeGenerator():
         return self.__algorithm
 
     def generate(self, algorithm: Algorithm, seed: Optional[int]
-                 | None) -> grid:
+                 = None) -> grid:
         """Generate the grid with the given algorithm
         and the seed of the instance.
 
