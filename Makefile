@@ -26,4 +26,7 @@ lint-strict:
 	poetry run $(PYTHON) -m flake8 . --exclude $(VENV)
 	poetry run $(PYTHON) -m mypy . $(MYPY_FLAGS) --strict
 
-.PHONY: install run debug clean lint lint-strict
+build-mazegen:
+	cd mazegen_lib; poetry build
+
+.PHONY: install run debug clean lint lint-strict build-mazegen
