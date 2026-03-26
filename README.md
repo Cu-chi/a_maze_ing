@@ -94,7 +94,7 @@ Roles:
 mchauvin: - HAK Algorithm, parsing & error handling, makefile, first algorithm for path_finding.  
 equentin: - DFS / Not-Perfect Algorithm, menu, vizualiser, package configuration.
 
-At the beginning of the project, we made a plan and divide every task between us. The deeper in the prokect the more we started adding new things to optimize everything.  
+At the beginning of the project, we made a plan and divide every task between us. The deeper in the project the more we started adding new things to optimize everything.  
 
 Overall everything works relatively well, we could've had some more animation when we display the maze. The DFS Not-Perfect algorithm can also be improve, because it is pretty random and hardcoded.  
 
