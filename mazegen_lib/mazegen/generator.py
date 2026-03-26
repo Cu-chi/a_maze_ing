@@ -358,13 +358,13 @@ class MazeGenerator():
         self.__path_step = 0
 
     def visualize(self, display_path: bool,
-                  animate: Optional[bool] = True) -> str:
+                  animate: Optional[bool] = False) -> str:
         """Generate the string of the visualization of the maze
         it also display the path from entry to exit if the argument is True
 
         Args:
             display_path (bool): display the shortest path
-            animate(optional bool): display with animation or not
+            animate(Optional[bool]): display with animation or not
 
         Returns:
             str: the visualization
