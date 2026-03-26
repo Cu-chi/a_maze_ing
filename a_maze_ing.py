@@ -36,7 +36,10 @@ def main() -> None:
             else True
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
-    except (ConfigError, FileNotFoundError) as e:
+    except ConfigError as e:
+        print(f"Config error line {e.line_index}: {e}", file=sys.stderr)
+        return
+    except FileNotFoundError as e:
         print(f"Config error: {e}", file=sys.stderr)
         return
     except (ValueError, KeyError) as e:
