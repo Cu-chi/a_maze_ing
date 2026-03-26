@@ -24,6 +24,8 @@ class MazeGenerator():
 
         Example:
         ```
+        from mazegen import MazeGenerator, Algorithm
+
         # instantiate the maze generator
         maze = MazeGenerator(10, 10, (0, 0), (9, 9))
 
