@@ -357,12 +357,14 @@ class MazeGenerator():
     def reset_path_steps(self) -> None:
         self.__path_step = 0
 
-    def visualize(self, display_path: bool) -> str:
+    def visualize(self, display_path: bool,
+                  animate: Optional[bool] = True) -> str:
         """Generate the string of the visualization of the maze
         it also display the path from entry to exit if the argument is True
 
         Args:
             display_path (bool): display the shortest path
+            animate(optional bool): display with animation or not
 
         Returns:
             str: the visualization
@@ -388,7 +390,7 @@ class MazeGenerator():
                     is_south_closed, is_east_closed, is_42 = \
                         self.__is_closed(x, y)
                     path: bool = self.__is_cell_path((x, y)) and display_path
-                    if path and (x, y) in limited_path:
+                    if path and ((x, y) in limited_path or not animate):
                         visualization += self.__path_color
                     if is_top:
                         if is_42:
@@ -402,7 +404,7 @@ class MazeGenerator():
                             if is_south_closed else "   "
                     visualization += "\033[0m"
                     visualization += self.__wall_color
-                    if path and (x, y) in limited_path:
+                    if path and ((x, y) in limited_path or not animate):
                         visualization += self.__path_color
                     visualization += "█" if is_east_closed \
                         else (" " if is_top else "▄")
