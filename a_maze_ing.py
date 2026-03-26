@@ -9,9 +9,17 @@ import time
 
 
 def main() -> None:
+    ALLOWED_KEYS: set[str] = {
+        "WIDTH", "HEIGHT", "ENTRY", "EXIT",
+        "SEED", "PERFECT", "OUTPUT_FILE", "PATH_ANIM"
+        }
     try:
         with open("config.txt", "r") as file:
             data: dict[str, str] = parsed_info(file)
+        unknown_keys: set[str] = set(data.keys()) - ALLOWED_KEYS
+        if unknown_keys:
+            raise ValueError(f"Unknown key(s) in "
+                             f"config: {', '.join(unknown_keys)}")
         width: int = get_int(data, "WIDTH")
         height: int = get_int(data, "HEIGHT")
         entry: point = get_point(data, "ENTRY")
