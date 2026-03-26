@@ -80,7 +80,7 @@ HAK (Hunt-and-Kill): An iterative alternative that avoids Python’s recursion l
 
 DFS_NOT_PERFECT: A variant that creates "Braid mazes" (cycles) by intentionally removing random walls after the initial generation.
 
-Why these choices?
+Why these choices?  
 The aim was to compare two different approaches to perfect maze generation (recursive vs. iterative) and to provide a "non-perfect" option to test the solver's robustness when faced with multiple possible paths.
 
 ### Reusable Code
@@ -89,8 +89,8 @@ Menu Class: Completely independent of the maze logic. It can be reused for any C
 BaseAlgorithm Class: A standardized interface allowing any new generation algorithm to be added simply by implementing a .generate() method.
 
 ### Project Management
-Roles:
-mchauvin: - HAK Algorithm, parsing & error handling, makefile, first algorithm for path_finding.
+Roles:  
+mchauvin: - HAK Algorithm, parsing & error handling, makefile, first algorithm for path_finding.  
 equentin: - DFS / Not-Perfect Algorithm, menu, vizualiser, package configuration.
 
 
@@ -99,17 +99,17 @@ Git: Version control.
 Termios/Sys: Low-level handling of standard input (stdin) for interactive mode.
 Poetry: https://python-poetry.org/docs
 ### Resources & AI
-Maze Theory: Jamis Buck’s work on graph algorithms. (https://weblog.jamisbuck.org/projects)
-Terminal Documentation: termios man pages for non-canonical mode. (https://docs.python.org/fr/3/library/termios.html)
+Maze Theory: Jamis Buck’s work on graph algorithms. (https://weblog.jamisbuck.org/projects)  
+Terminal Documentation: termios man pages for non-canonical mode. (https://docs.python.org/fr/3/library/termios.html)  
 Path_finding: https://levelup.gitconnected.com/solve-a-maze-with-python-e9f0580979a1
 
 ### AI Usage:
-Gemini Pro was used to create a plan for each person to work on specific code. It was also used to get some information about new concept that we didn't use before like creating a menu, poetry, some git-hub command etc...
+Gemini Pro was used to create a plan for each person to work on specific code. It was also used to get some information about new concept that we didn't use before like creating a menu, poetry, some git-hub command etc...  
 Finally it was also used to check the grammar and vocabulary of this readme.
 
 ### Advanced Features
-Color Rotation: Dynamic customization of walls, path, and "42" logo colors.
-Path Animation: The solver animates the path progression at a speed proportional to the path length.
-Multiple algorithm: Multiple algorithm to solve the maze.
-Switch command: The possibility to switch algorithm in the menu.
-Menu navigation: User friendly navigation system.
+Color Rotation: Dynamic customization of walls, path, and "42" logo colors.  
+Path Animation: The solver animates the path progression at a speed proportional to the path length.  
+Multiple algorithm: Multiple algorithm to solve the maze.  
+Switch command: The possibility to switch algorithm in the menu.  
+Menu navigation: User friendly navigation system.  
