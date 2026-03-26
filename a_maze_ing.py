@@ -24,6 +24,8 @@ def main() -> None:
             raise KeyError("missing key : OUTPUT_FILE")
         elif not output_file_name.endswith(".txt"):
             raise ValueError("OUTPUT_FILE must end with .txt")
+        path_anim: bool = get_bool(data, "PATH_ANIM") if "PATH_ANIM" in data \
+            else True
         sys.setrecursionlimit(1000000)
         maze: MazeGenerator = MazeGenerator(width, height, entry, exits, seed)
     except (ConfigError, FileNotFoundError) as e:
@@ -59,7 +61,7 @@ def main() -> None:
         if not perfect_flag:
             maze.generate(Algorithm.DFS_NOT_PERFECT, None)
         else:
-            maze.generate(Algorithm.DFS, None)
+            maze.generate(Algorithm.HAK, None)
         maze.solver()
         path_steps = maze.get_path_length()
 
@@ -106,16 +108,18 @@ def main() -> None:
                 if perfect_flag:
                     menu.menu_list.append(("Switch algorithm", change_algo))
                 menu.menu_list.append(("Exit", handle_exit))
-                if not path_state:
+                if not path_state or not path_anim:
                     path_steps = 0
                 else:
                     for _ in range(path_steps - 1):
-                        menu.show(menu.append_menu(maze.visualize(path_state)))
+                        menu.show(menu.append_menu(maze.visualize(path_state,
+                                                                  path_anim)))
                         delay: float = 1 / maze.get_path_length()
                         if delay >= 0.001:
                             time.sleep(delay)
                     path_steps = 0
-                menu.show(menu.append_menu(maze.visualize(path_state)))
+                menu.show(menu.append_menu(maze.visualize(path_state,
+                                                          path_anim)))
 
                 with open(output_file_name, "w") as file:
                     file.write(maze.output())
