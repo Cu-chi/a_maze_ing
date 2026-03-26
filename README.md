@@ -72,6 +72,7 @@ seed: Optional parameter to replay a specific generation.
 | OUTPUT_FILE | Output filename                                    | OUTPUT_FILE=maze.txt | NO       |
 | PERFECT     | Is the maze perfect? (True or False)               | PERFECT=True         | NO       |
 | SEED        | Optional parameter to replay a specific generation | SEED=1245            | YES      |
+| PATH_ANIM   | Optional parameter to animate or not the path      | PATH_ANIM=True       | YES (True by default)|
 ### Generation Algorithms
 Implemented Algorithms:
 DFS (Recursive Backtracking): Creates "perfect" mazes with long, winding paths by exploring depth-first.
