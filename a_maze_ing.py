@@ -105,6 +105,13 @@ def main() -> None:
         new_maze()
         with menu.visualizator():
             while not menu.exiting:
+                menu.menu_description = f"""
+
+{maze.get_entry_color()}  \033[0m: ENTRY
+{maze.get_exit_color()}  \033[0m: EXIT
+Seed: {maze.get_seed()} (Algorithm: {maze.get_algorithm()})
+
+"""
                 menu.menu_list = [
                     ("Generate a new maze", new_maze),
                     ("Show/Hide shortest path from the entrance to the exit",
@@ -112,9 +119,7 @@ def main() -> None:
                     ("Change maze wall colours", color_wall),
                     ("Change path colours", color_path),
                     ("Change 42 colours", color_42),
-                    ("Random colours", color_random),
-                    (f"Seed: {maze.get_seed()} "
-                     f"(Algorithm: {maze.get_algorithm()})", lambda: None)
+                    ("Random colours", color_random)
                 ]
                 if perfect_flag:
                     menu.menu_list.append(("Switch algorithm", change_algo))

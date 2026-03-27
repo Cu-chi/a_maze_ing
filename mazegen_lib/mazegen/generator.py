@@ -96,6 +96,8 @@ class MazeGenerator():
         self.__path_color: str = "\033[106m"
         self.__algorithm: str = ""
         self.__path_step: int = 0
+        self.__entry_color: str = "\033[46m"
+        self.__exit_color: str = "\033[103m"
         self.create_grid()
 
     def create_grid(self) -> None:
@@ -154,6 +156,12 @@ class MazeGenerator():
             str: algorithm key
         """
         return self.__algorithm
+
+    def get_entry_color(self) -> str:
+        return self.__entry_color
+
+    def get_exit_color(self) -> str:
+        return self.__exit_color
 
     def generate(self, algorithm: Algorithm, seed: Optional[int]
                  = None) -> grid:
