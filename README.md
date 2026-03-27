@@ -1,5 +1,7 @@
 *This project has been created as part of the 42 curriculum by equentin, mchauvin.*
 
+![preview](preview.gif)
+
 ## Description
 **A-Maze-ing** is an interactive command-line application for generating, visualizing, and solving mazes. The project focuses on data structure manipulation (matrices), graph theory algorithms, and dynamic UI management within a terminal using ANSI escape sequences. The maze has to be reusable for futur project involving a maze. A seed is also needed to be able to reproduce the same maze again.
 
