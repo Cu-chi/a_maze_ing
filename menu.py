@@ -9,6 +9,7 @@ class Menu:
         self.current_indexed: int = 0
         self.exiting: bool = False
         self.menu_list: list[tuple[str, Callable[[], Any]]] = []
+        self.menu_description: str = ""
 
     @staticmethod
     def set_cursor_position(x: int, y: int) -> None:
@@ -55,7 +56,7 @@ class Menu:
         sys.stdout.flush()
 
     def append_menu(self, output: str) -> str:
-        output += "\n"
+        output += self.menu_description
         for i, menu_data in enumerate(self.menu_list):
             if self.current_indexed == i:
                 output += "\033[47m\033[30m"
