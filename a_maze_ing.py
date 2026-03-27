@@ -39,7 +39,7 @@ def main() -> None:
     except ConfigError as e:
         print(f"Config error line {e.line_index}: {e}", file=sys.stderr)
         return
-    except FileNotFoundError as e:
+    except (FileNotFoundError, PermissionError) as e:
         print(f"Config error: {e}", file=sys.stderr)
         return
     except (ValueError, KeyError) as e:
@@ -140,6 +140,8 @@ def main() -> None:
         handle_exit(f"Caught DrawError, we were unable to draw:\n{e}")
     except KeyboardInterrupt:
         handle_exit()
+    except PermissionError as e:
+        handle_exit(f"{e}")
     except Exception as e:
         handle_exit(f"{e}")
 
