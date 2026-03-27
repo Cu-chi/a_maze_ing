@@ -101,12 +101,25 @@ def main() -> None:
         maze.solver()
         path_steps = maze.get_path_length()
 
+    def gen_new_maze() -> None:
+        nonlocal path_steps
+        if perfect_flag is True:
+            gen_maze = Algorithm.DFS \
+                if maze.get_algorithm() == "DFS" else Algorithm.HAK
+        else:
+            gen_maze = Algorithm.DFS_NOT_PERFECT
+        maze.create_grid()
+        maze.draw_42()
+        maze.generate(gen_maze, None)
+        maze.solver()
+        path_steps = maze.get_path_length()
+
     try:
         new_maze()
         with menu.visualizator():
             while not menu.exiting:
                 menu.menu_list = [
-                    ("Generate a new maze", new_maze),
+                    ("Generate a new maze", gen_new_maze),
                     ("Show/Hide shortest path from the entrance to the exit",
                         path_display),
                     ("Change maze wall colours", color_wall),
