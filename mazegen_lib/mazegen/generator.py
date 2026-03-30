@@ -43,6 +43,10 @@ class MazeGenerator():
 
         # visualize the maze (boolean for the visibility of the path)
         print(maze.visualize(True))
+
+        # create output file to see the result of the generation
+        with open("maze_output.txt", "w") as file:
+            file.write(maze.output())
         ```
 
         Args:
