@@ -15,7 +15,7 @@ debug:
 	poetry run $(PYTHON) -m pdb $(MAIN) $(CONFIG)
 
 clean:
-	@rm -rf $$(find . -type d -name "__pycache__") $$(find . -type d -name ".mypy_cache")_
+	@rm -rf $$(find . -type d -name "__pycache__") $$(find . -type d -name ".mypy_cache")
 
 lint:
 	poetry run $(PYTHON) -m flake8 . --exclude $(VENV)
