@@ -13,8 +13,12 @@ def main() -> None:
         "WIDTH", "HEIGHT", "ENTRY", "EXIT",
         "SEED", "PERFECT", "OUTPUT_FILE", "PATH_ANIM"
         }
+    if len(sys.argv) <= 1:
+        print("Missing config argument: \n"
+              f"python3 {sys.argv[0]} [CONFIG]", file=sys.stderr)
+        return
     try:
-        with open("config.txt", "r") as file:
+        with open(sys.argv[1], "r") as file:
             data: dict[str, str] = parsed_info(file)
         unknown_keys: set[str] = set(data.keys()) - ALLOWED_KEYS
         if unknown_keys:
